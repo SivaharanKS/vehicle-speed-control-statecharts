@@ -1,0 +1,380 @@
+I-Logix-RPY-Archive version 8.7.1 C++ 5066837
+{ ISubsystem 
+	- _id = GUID 01dd56fe-298e-423f-8f52-a5e5dff6dbdc;
+	- _myState = 8192;
+	- _name = "IHM_Objets";
+	- _lastID = 2;
+	- weakCGTime = 9.26.2017::22:8:0;
+	- strongCGTime = 10.3.2016::22:41:54;
+	- ComponentFiles = { IRPYRawContainer 
+		- size = 2;
+		- value = 
+		{ IFile 
+			- _id = GUID c3be1d20-f734-4520-88c1-79f982a416eb;
+			- _myState = 139264;
+			- _name = "IHM_Objets";
+			- m_path = "";
+			- m_type = implFile;
+			- Fragments = { IRPYRawContainer 
+				- size = 2;
+				- value = 
+				{ IFileFragment 
+					- _id = GUID 84e8604c-3845-41fe-b997-7d3955e43ba2;
+					- _name = "PredefinedUMainPkg_NE_PAS_MODIFIER:spec";
+					- m_type = textFragment;
+					- m_text = "//## auto:dependency PredefinedUMainPkg_NE_PAS_MODIFIER:spec";
+					- m_startRow = 16;
+					- m_startCol_Short = 1;
+					- m_endRow = 16;
+					- m_endCol_Short = 48;
+					- m_subject = { INObjectHandle 
+						- _m2Class = "";
+					}
+				}
+				{ IFileFragment 
+					- _id = GUID 6fd8b2cf-0493-4c10-bea2-c5a515aa990a;
+					- _name = "MainDeApplication:spec";
+					- m_type = textFragment;
+					- m_text = "//## auto:dependency MainDeApplication:spec";
+					- m_startRow = 18;
+					- m_startCol_Short = 1;
+					- m_endRow = 18;
+					- m_endCol_Short = 31;
+					- m_subject = { INObjectHandle 
+						- _m2Class = "";
+					}
+				}
+			}
+		}
+		{ IFile 
+			- _id = GUID bb1bcab8-9090-432d-b733-071eeaa61267;
+			- _myState = 139264;
+			- _name = "IHM_Objets";
+			- m_path = "";
+			- m_type = specFile;
+			- Fragments = { IRPYRawContainer 
+				- size = 3;
+				- value = 
+				{ IFileFragment 
+					- _id = GUID 8476d9f9-4d93-4d14-b473-21513d138dc9;
+					- _name = "oxf:spec";
+					- m_type = textFragment;
+					- m_text = "//## auto:dependency oxf:spec";
+					- m_startRow = 15;
+					- m_startCol_Short = 1;
+					- m_endRow = 15;
+					- m_endCol_Short = 21;
+					- m_subject = { INObjectHandle 
+						- _m2Class = "";
+					}
+				}
+				{ IFileFragment 
+					- _id = GUID d1ec0f65-604c-47b3-a19f-73afa29e1cce;
+					- _name = "aom:spec";
+					- m_type = textFragment;
+					- m_text = "//## auto:dependency aom:spec";
+					- m_startRow = 17;
+					- m_startCol_Short = 1;
+					- m_endRow = 17;
+					- m_endCol_Short = 21;
+					- m_subject = { INObjectHandle 
+						- _m2Class = "";
+					}
+				}
+				{ IFileFragment 
+					- _id = GUID 3877f511-70e7-40e4-857f-788bedf40adb;
+					- _name = "MainDeApplication:spec";
+					- m_type = textFragment;
+					- m_text = "//## auto:dependency MainDeApplication:spec";
+					- m_startRow = 19;
+					- m_startCol_Short = 1;
+					- m_endRow = 19;
+					- m_endCol_Short = 24;
+					- m_subject = { INObjectHandle 
+						- _m2Class = "";
+					}
+				}
+			}
+		}
+	}
+	- _defaultComposite = GUID c6ebe487-749a-424c-8c16-94f16e9ee15a;
+	- _eventsBaseID = -1;
+	- Classes = { IRPYRawContainer 
+		- size = 2;
+		- value = 
+		{ IClass 
+			- _id = GUID c6ebe487-749a-424c-8c16-94f16e9ee15a;
+			- _myState = 40960;
+			- _name = "TopLevel";
+			- weakCGTime = 9.26.2017::22:8:0;
+			- strongCGTime = 10.3.2016::22:41:54;
+			- _multiplicity = "";
+			- _itsStateChart = { IHandle 
+				- _m2Class = "";
+			}
+			- _classModifier = Unspecified;
+		}
+		{ IClass 
+			- _id = GUID 187c4360-fdb2-4b6f-996d-5c38ed7c9d37;
+			- _myState = 8192;
+			- _name = "Main";
+			- _theMainDiagram = { IHandle 
+				- _m2Class = "IDiagram";
+				- _filename = "";
+				- _subsystem = "";
+				- _class = "";
+				- _name = "MainDiagram";
+				- _id = GUID 157a46cf-adcc-4952-aec9-4db509148774;
+			}
+			- weakCGTime = 9.26.2017::22:8:10;
+			- strongCGTime = 9.26.2017::14:35:36;
+			- Operations = { IRPYRawContainer 
+				- size = 6;
+				- value = 
+				{ IPrimitiveOperation 
+					- _id = GUID 1739f911-a1b9-405b-af85-8b846a34e6b6;
+					- _myState = 8192;
+					- _name = "getItsDriverVolant";
+					- _virtual = 0;
+					- Args = { IRPYRawContainer 
+						- size = 0;
+					}
+					- myReturnType = { IType 
+						- _id = GUID 80d38967-5d0f-4217-bc48-248acd20c5b0;
+						- _myState = 8192;
+						- _declaration = "DriverVolant*";
+						- _kind = Language;
+					}
+					- _abstract = 0;
+					- _final = 0;
+					- _concurrency = Sequential;
+					- _protection = iPublic;
+					- _static = 0;
+					- _constant = 1;
+					- _itsBody = { IBody 
+						- _bodyData = "return (DriverVolant*) &objetDriverVolant;";
+					}
+				}
+				{ IPrimitiveOperation 
+					- _id = GUID 928542fe-93c8-4769-8ae9-bd48979e96cc;
+					- _myState = 8192;
+					- _name = "getItsVehiculeMoteur";
+					- _virtual = 0;
+					- Args = { IRPYRawContainer 
+						- size = 0;
+					}
+					- myReturnType = { IType 
+						- _id = GUID 47bb58ff-e83e-4b7e-b469-904a7d449a16;
+						- _myState = 8192;
+						- _declaration = "_SysVehicule*";
+						- _kind = Language;
+					}
+					- _abstract = 0;
+					- _final = 0;
+					- _concurrency = Sequential;
+					- _protection = iPublic;
+					- _static = 0;
+					- _constant = 1;
+					- _itsBody = { IBody 
+						- _bodyData = "return (_SysVehicule*) &objetSysVehicule;";
+					}
+				}
+				{ IPrimitiveOperation 
+					- _id = GUID e2ad6702-465d-4e8c-8854-f635c260e993;
+					- _myState = 8192;
+					- _name = "destroy";
+					- _virtual = 1;
+					- Args = { IRPYRawContainer 
+						- size = 0;
+					}
+					- _returnType = { IHandle 
+						- _m2Class = "IType";
+						- _filename = "PredefinedTypesC++.sbs";
+						- _subsystem = "PredefinedTypesCpp";
+						- _class = "";
+						- _name = "void";
+						- _id = GUID c6b70728-b655-45a0-abb7-8ea5d3da94be;
+					}
+					- _abstract = 0;
+					- _final = 0;
+					- _concurrency = Sequential;
+					- _protection = iPublic;
+					- _static = 0;
+					- _constant = 0;
+					- _itsBody = { IBody 
+						- _bodyData = "objetDriverVolant.destroy();
+objetSysVehicule.destroy();
+OMReactive::destroy();";
+					}
+				}
+				{ IPrimitiveOperation 
+					- _id = GUID 71ae407a-222b-48ae-bfc8-5cce2e69d9f5;
+					- _myState = 8192;
+					- _name = "initRelations";
+					- _virtual = 0;
+					- Args = { IRPYRawContainer 
+						- size = 0;
+					}
+					- _returnType = { IHandle 
+						- _m2Class = "IType";
+						- _filename = "PredefinedTypesC++.sbs";
+						- _subsystem = "PredefinedTypesCpp";
+						- _class = "";
+						- _name = "void";
+						- _id = GUID c6b70728-b655-45a0-abb7-8ea5d3da94be;
+					}
+					- _abstract = 0;
+					- _final = 0;
+					- _concurrency = Sequential;
+					- _protection = iProtected;
+					- _static = 0;
+					- _constant = 0;
+					- _itsBody = { IBody 
+						- _bodyData = "{
+    
+    objetDriverVolant.get_toVehicule()->setItsIVehicule(objetSysVehicule.get_fromV()->getItsIVehicule());
+    
+}";
+					}
+				}
+				{ IPrimitiveOperation 
+					- _id = GUID 9b90bc9f-3111-459d-a1ac-aad61d2d5634;
+					- _myState = 8192;
+					- _name = "startBehavior";
+					- _virtual = 1;
+					- Args = { IRPYRawContainer 
+						- size = 0;
+					}
+					- _returnType = { IHandle 
+						- _m2Class = "IType";
+						- _filename = "PredefinedTypesC++.sbs";
+						- _subsystem = "PredefinedTypesCpp";
+						- _class = "";
+						- _name = "bool";
+						- _id = GUID e6c263cc-4bc5-4a11-b32d-02148c93add0;
+					}
+					- _abstract = 0;
+					- _final = 0;
+					- _concurrency = Sequential;
+					- _protection = iPublic;
+					- _static = 0;
+					- _constant = 0;
+					- _itsBody = { IBody 
+						- _bodyData = "bool done = true;
+done &= objetDriverVolant.startBehavior();
+done &= objetSysVehicule.startBehavior();
+done &= OMReactive::startBehavior();
+return done;";
+					}
+				}
+				{ IPrimitiveOperation 
+					- _id = GUID be8f2919-1935-4387-8999-789c4bc0ff27;
+					- _myState = 8192;
+					- _name = "getObjetSysVehicule";
+					- _virtual = 0;
+					- Args = { IRPYRawContainer 
+						- size = 0;
+					}
+					- myReturnType = { IType 
+						- _id = GUID 146e8bc5-c5d6-4d21-8434-a8eb37597105;
+						- _myState = 8192;
+						- _declaration = "_SysVehicule*";
+						- _kind = Language;
+					}
+					- _abstract = 0;
+					- _final = 0;
+					- _concurrency = Sequential;
+					- _protection = iPublic;
+					- _static = 0;
+					- _constant = 1;
+					- _itsBody = { IBody 
+						- _bodyData = "return (_SysVehicule*) &objetSysVehicule;";
+					}
+				}
+			}
+			- _multiplicity = "";
+			- _itsStateChart = { IHandle 
+				- _m2Class = "";
+			}
+			- Associations = { IRPYRawContainer 
+				- size = 2;
+				- value = 
+				{ IPart 
+					- _id = GUID 2731af7b-953d-4383-ac71-d3660a0ae942;
+					- _myState = 8192;
+					- _name = "objetSysVehicule";
+					- _multiplicity = "1";
+					- _otherClass = { IClassifierHandle 
+						- _m2Class = "IClass";
+						- _filename = "_MonPkg.sbs";
+						- _subsystem = "_MonPkg";
+						- _class = "";
+						- _name = "_SysVehicule";
+						- _id = GUID 3684b53f-4fb7-4106-9c73-3759402a3dd5;
+					}
+					- _inverse = { IHandle 
+						- _m2Class = "";
+					}
+				}
+				{ IPart 
+					- _id = GUID 01244938-cb4c-426e-8bf6-d843710b2b31;
+					- _myState = 8192;
+					- _name = "objetDriverVolant";
+					- _multiplicity = "1";
+					- _otherClass = { IClassifierHandle 
+						- _m2Class = "IClass";
+						- _filename = "_MonPkg.sbs";
+						- _subsystem = "_MonPkg";
+						- _class = "";
+						- _name = "DriverVolant";
+						- _id = GUID be19125c-fe2c-4029-a680-2f1b1c551c0b;
+					}
+					- _inverse = { IHandle 
+						- _m2Class = "";
+					}
+				}
+			}
+			- ObjectLinks = { IRPYRawContainer 
+				- size = 1;
+				- value = 
+				{ IObjectLink 
+					- _id = GUID 33872c2f-a458-481d-bc18-5e2e9edf4cc0;
+					- _myState = 10240;
+					- _name = "objetDriverVolant_objetSysVehicule";
+					- _toLink = { IHandle 
+						- _m2Class = "IPart";
+						- _id = GUID 2731af7b-953d-4383-ac71-d3660a0ae942;
+					}
+					- _fromLink = { IHandle 
+						- _m2Class = "IPart";
+						- _id = GUID 01244938-cb4c-426e-8bf6-d843710b2b31;
+					}
+					- _instantiates = { IMetaLinkHandle 
+						- _m2Class = "";
+					}
+					- _end1Multiplicity = "1";
+					- _end2Multiplicity = "1";
+					- _toPort = { IHandle 
+						- _m2Class = "IPort";
+						- _filename = "_MonPkg.sbs";
+						- _subsystem = "_MonPkg";
+						- _class = "_SysVehicule";
+						- _name = "fromV";
+						- _id = GUID 58b3c88b-16bb-4c86-9b84-3e412ad03812;
+					}
+					- _fromPort = { IHandle 
+						- _m2Class = "IPort";
+						- _filename = "_MonPkg.sbs";
+						- _subsystem = "_MonPkg";
+						- _class = "DriverVolant";
+						- _name = "toVehicule";
+						- _id = GUID ee8591da-c504-4bb9-a87a-234d4630d807;
+					}
+				}
+			}
+			- _classModifier = Unspecified;
+		}
+	}
+	- _configurationRelatedTime = 9.26.2017::22:6:28;
+}
+

@@ -1,0 +1,4 @@
+* text=auto
+# Rhapsody model and generated code are kept byte-for-byte (Windows line endings)
+rhapsody/** -text
+*.png binary

@@ -1,0 +1,18 @@
+# Build outputs (Visual C++ / Rhapsody)
+*.exe
+*.obj
+*.ilk
+*.pdb
+*.idb
+*.pch
+# Rhapsody temporary / log files
+*.log
+*.save
+*.ehl
+*.rpw
+*.rpwx
+tmp*
+error.txt
+*_ATG/
+# Sound files are not redistributed (see README)
+*.wav
