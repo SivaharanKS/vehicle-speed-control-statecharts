@@ -4,7 +4,7 @@
 	Component	: CodesGeneres 
 	Configuration 	: ModeAnimation
 	Model Element	: _SysVehicule
-//!	Generated Date	: Tue, 30, Sep 2025  
+//!	Generated Date	: Tue, 7, Oct 2025  
 	File Path	: CodesGeneres\ModeAnimation\_SysVehicule.h
 *********************************************************************/
 
@@ -43,6 +43,10 @@
 #define OMAnim__MonPkg__SysVehicule_setAccelPedal_double_ARGS_DECLARATION double p_accelPedal;
 
 #define OMAnim__MonPkg__SysVehicule_setAlpha_int_ARGS_DECLARATION int p_alpha;
+
+#define OMAnim__MonPkg__SysVehicule_setBrakePedal_double_ARGS_DECLARATION double p_brakePedal;
+
+#define OMAnim__MonPkg__SysVehicule_setKey_bool_ARGS_DECLARATION bool p_key;
 
 #define OMAnim__MonPkg__SysVehicule_setThrottle_double_ARGS_DECLARATION double p_throttle;
 //#]
@@ -233,8 +237,26 @@ public :
     //## auto_generated
     virtual bool startBehavior();
     
+    //## operation setMajor()
+    void setMajor();
+    
+    //## operation setMinus()
+    void setMinus();
+    
+    //## auto_generated
+    bool getFlag();
+    
+    //## auto_generated
+    void setFlag(bool p_flag);
+    
     //## auto_generated
     void setIgnition(bool p_ignition);
+    
+    //## auto_generated
+    bool getKey();
+    
+    //## auto_generated
+    void setKey(bool p_key);
     
     //## auto_generated
     void setSpeed(int p_speed);
@@ -252,6 +274,10 @@ protected :
     
     //## auto_generated
     bool cancelTimeout(const IOxfTimeout* arg);
+    
+    bool flag;		//## attribute flag
+    
+    bool key;		//## attribute key
 
 public :
 
@@ -269,6 +295,12 @@ public :
     //## statechart_method
     inline bool state_4_IN() const;
     
+    //## statechart_method
+    IOxfReactive::TakeEventStatus state_4TakeNull();
+    
+    //## statechart_method
+    IOxfReactive::TakeEventStatus state_4_handleEvent();
+    
     // state_0:
     //## statechart_method
     inline bool state_0_IN() const;
@@ -282,6 +314,9 @@ public :
     //## statechart_method
     IOxfReactive::TakeEventStatus state_0_processEvent();
     
+    //## statechart_method
+    IOxfReactive::TakeEventStatus state_0_handleEvent();
+    
     // state_9:
     //## statechart_method
     inline bool state_9_IN() const;
@@ -290,14 +325,22 @@ public :
     void state_9_entDef();
     
     //## statechart_method
-    void state_9_exit();
-    
-    //## statechart_method
     IOxfReactive::TakeEventStatus state_9_processEvent();
+    
+    // Neutre:
+    //## statechart_method
+    inline bool Neutre_IN() const;
+    
+    // Freint:
+    //## statechart_method
+    inline bool Freint_IN() const;
     
     // Accelerartion:
     //## statechart_method
     inline bool Accelerartion_IN() const;
+    
+    //## statechart_method
+    IOxfReactive::TakeEventStatus Accelerartion_handleEvent();
     
     // state_2:
     //## statechart_method
@@ -321,7 +364,52 @@ public :
     inline bool state_1_IN() const;
     
     //## statechart_method
+    void state_1_entDef();
+    
+    //## statechart_method
     IOxfReactive::TakeEventStatus state_1_processEvent();
+    
+    // motorOn:
+    //## statechart_method
+    inline bool motorOn_IN() const;
+    
+    // motorOff:
+    //## statechart_method
+    inline bool motorOff_IN() const;
+    
+    // Regulateur:
+    //## statechart_method
+    inline bool Regulateur_IN() const;
+    
+    //## statechart_method
+    void Regulateur_entDef();
+    
+    //## statechart_method
+    IOxfReactive::TakeEventStatus RegulateurTakeregOff();
+    
+    //## statechart_method
+    IOxfReactive::TakeEventStatus Regulateur_handleEvent();
+    
+    // Minus:
+    //## statechart_method
+    inline bool Minus_IN() const;
+    
+    //## statechart_method
+    IOxfReactive::TakeEventStatus Minus_handleEvent();
+    
+    // Major:
+    //## statechart_method
+    inline bool Major_IN() const;
+    
+    //## statechart_method
+    IOxfReactive::TakeEventStatus Major_handleEvent();
+    
+    // consigne:
+    //## statechart_method
+    inline bool consigne_IN() const;
+    
+    //## statechart_method
+    IOxfReactive::TakeEventStatus consigne_handleEvent();
 
 protected :
 
@@ -331,10 +419,18 @@ protected :
         state_4 = 1,
         state_0 = 2,
         state_9 = 3,
-        Accelerartion = 4,
-        state_2 = 5,
-        Calcul_Vitesse_Distance = 6,
-        state_1 = 7
+        Neutre = 4,
+        Freint = 5,
+        Accelerartion = 6,
+        state_2 = 7,
+        Calcul_Vitesse_Distance = 8,
+        state_1 = 9,
+        motorOn = 10,
+        motorOff = 11,
+        Regulateur = 12,
+        Minus = 13,
+        Major = 14,
+        consigne = 15
     };
     
     int rootState_subState;
@@ -356,6 +452,10 @@ protected :
     int state_1_subState;
     
     int state_1_active;
+    
+    IOxfTimeout* state_1_timeout;
+    
+    int Regulateur_subState;
 //#]
 };
 
@@ -363,6 +463,10 @@ protected :
 DECLARE_OPERATION_CLASS(_MonPkg__SysVehicule_setAccelPedal_double)
 
 DECLARE_OPERATION_CLASS(_MonPkg__SysVehicule_setAlpha_int)
+
+DECLARE_OPERATION_CLASS(_MonPkg__SysVehicule_setBrakePedal_double)
+
+DECLARE_OPERATION_CLASS(_MonPkg__SysVehicule_setKey_bool)
 
 DECLARE_OPERATION_CLASS(_MonPkg__SysVehicule_setThrottle_double)
 
@@ -373,6 +477,10 @@ class OMAnimated_SysVehicule : virtual public AOMInstance {
     DECLARE_META_OP(_MonPkg__SysVehicule_setAccelPedal_double)
     
     DECLARE_META_OP(_MonPkg__SysVehicule_setAlpha_int)
+    
+    DECLARE_META_OP(_MonPkg__SysVehicule_setBrakePedal_double)
+    
+    DECLARE_META_OP(_MonPkg__SysVehicule_setKey_bool)
     
     DECLARE_META_OP(_MonPkg__SysVehicule_setThrottle_double)
     
@@ -395,6 +503,12 @@ public :
     void state_9_serializeStates(AOMSState* aomsState) const;
     
     //## statechart_method
+    void Neutre_serializeStates(AOMSState* aomsState) const;
+    
+    //## statechart_method
+    void Freint_serializeStates(AOMSState* aomsState) const;
+    
+    //## statechart_method
     void Accelerartion_serializeStates(AOMSState* aomsState) const;
     
     //## statechart_method
@@ -405,6 +519,24 @@ public :
     
     //## statechart_method
     void state_1_serializeStates(AOMSState* aomsState) const;
+    
+    //## statechart_method
+    void motorOn_serializeStates(AOMSState* aomsState) const;
+    
+    //## statechart_method
+    void motorOff_serializeStates(AOMSState* aomsState) const;
+    
+    //## statechart_method
+    void Regulateur_serializeStates(AOMSState* aomsState) const;
+    
+    //## statechart_method
+    void Minus_serializeStates(AOMSState* aomsState) const;
+    
+    //## statechart_method
+    void Major_serializeStates(AOMSState* aomsState) const;
+    
+    //## statechart_method
+    void consigne_serializeStates(AOMSState* aomsState) const;
 };
 //#]
 #endif // _OMINSTRUMENT
@@ -425,6 +557,14 @@ inline bool _SysVehicule::state_9_IN() const {
     return state_0_IN();
 }
 
+inline bool _SysVehicule::Neutre_IN() const {
+    return state_9_subState == Neutre;
+}
+
+inline bool _SysVehicule::Freint_IN() const {
+    return state_9_subState == Freint;
+}
+
 inline bool _SysVehicule::Accelerartion_IN() const {
     return state_9_subState == Accelerartion;
 }
@@ -439,6 +579,30 @@ inline bool _SysVehicule::Calcul_Vitesse_Distance_IN() const {
 
 inline bool _SysVehicule::state_1_IN() const {
     return state_0_IN();
+}
+
+inline bool _SysVehicule::motorOn_IN() const {
+    return state_1_subState == motorOn;
+}
+
+inline bool _SysVehicule::motorOff_IN() const {
+    return state_1_subState == motorOff;
+}
+
+inline bool _SysVehicule::Regulateur_IN() const {
+    return rootState_subState == Regulateur;
+}
+
+inline bool _SysVehicule::Minus_IN() const {
+    return Regulateur_subState == Minus;
+}
+
+inline bool _SysVehicule::Major_IN() const {
+    return Regulateur_subState == Major;
+}
+
+inline bool _SysVehicule::consigne_IN() const {
+    return Regulateur_subState == consigne;
 }
 
 #endif
