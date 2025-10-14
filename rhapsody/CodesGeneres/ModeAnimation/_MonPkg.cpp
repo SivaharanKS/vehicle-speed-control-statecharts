@@ -4,7 +4,7 @@
 	Component	: CodesGeneres 
 	Configuration 	: ModeAnimation
 	Model Element	: _MonPkg
-//!	Generated Date	: Tue, 7, Oct 2025  
+//!	Generated Date	: Tue, 14, Oct 2025  
 	File Path	: CodesGeneres\ModeAnimation\_MonPkg.cpp
 *********************************************************************/
 
@@ -17,18 +17,6 @@
 //## auto_generated
 #include "_SysVehicule.h"
 //#[ ignore
-#define regOff_SERIALIZE OM_NO_OP
-
-#define regOff_UNSERIALIZE OM_NO_OP
-
-#define regOff_CONSTRUCTOR regOff()
-
-#define regOn_SERIALIZE OM_NO_OP
-
-#define regOn_UNSERIALIZE OM_NO_OP
-
-#define regOn_CONSTRUCTOR regOn()
-
 #define setMinus_SERIALIZE OM_NO_OP
 
 #define setMinus_UNSERIALIZE OM_NO_OP
@@ -52,6 +40,18 @@
 #define setMaj_UNSERIALIZE OM_NO_OP
 
 #define setMaj_CONSTRUCTOR setMaj()
+
+#define setMinLim_SERIALIZE OM_NO_OP
+
+#define setMinLim_UNSERIALIZE OM_NO_OP
+
+#define setMinLim_CONSTRUCTOR setMinLim()
+
+#define setMajLim_SERIALIZE OM_NO_OP
+
+#define setMajLim_UNSERIALIZE OM_NO_OP
+
+#define setMajLim_CONSTRUCTOR setMajLim()
 //#]
 
 //## package _MonPkg
@@ -65,30 +65,6 @@ IMPLEMENT_META_PACKAGE(_MonPkg, _MonPkg)
 static void serializeGlobalVars(AOMSAttributes* /* aomsAttributes */) {
 }
 #endif // _OMINSTRUMENT
-
-//## event regOff()
-regOff::regOff() {
-    NOTIFY_EVENT_CONSTRUCTOR(regOff)
-    setId(regOff__MonPkg_id);
-}
-
-bool regOff::isTypeOf(const short id) const {
-    return (regOff__MonPkg_id==id);
-}
-
-IMPLEMENT_META_EVENT_P(regOff, _MonPkg, _MonPkg, regOff())
-
-//## event regOn()
-regOn::regOn() {
-    NOTIFY_EVENT_CONSTRUCTOR(regOn)
-    setId(regOn__MonPkg_id);
-}
-
-bool regOn::isTypeOf(const short id) const {
-    return (regOn__MonPkg_id==id);
-}
-
-IMPLEMENT_META_EVENT_P(regOn, _MonPkg, _MonPkg, regOn())
 
 //## event setMinus()
 setMinus::setMinus() {
@@ -137,6 +113,30 @@ bool setMaj::isTypeOf(const short id) const {
 }
 
 IMPLEMENT_META_EVENT_P(setMaj, _MonPkg, _MonPkg, setMaj())
+
+//## event setMinLim()
+setMinLim::setMinLim() {
+    NOTIFY_EVENT_CONSTRUCTOR(setMinLim)
+    setId(setMinLim__MonPkg_id);
+}
+
+bool setMinLim::isTypeOf(const short id) const {
+    return (setMinLim__MonPkg_id==id);
+}
+
+IMPLEMENT_META_EVENT_P(setMinLim, _MonPkg, _MonPkg, setMinLim())
+
+//## event setMajLim()
+setMajLim::setMajLim() {
+    NOTIFY_EVENT_CONSTRUCTOR(setMajLim)
+    setId(setMajLim__MonPkg_id);
+}
+
+bool setMajLim::isTypeOf(const short id) const {
+    return (setMajLim__MonPkg_id==id);
+}
+
+IMPLEMENT_META_EVENT_P(setMajLim, _MonPkg, _MonPkg, setMajLim())
 
 /*********************************************************************
 	File Path	: CodesGeneres\ModeAnimation\_MonPkg.cpp

@@ -4,7 +4,7 @@
 	Component	: CodesGeneres 
 	Configuration 	: ModeAnimation
 	Model Element	: _SysVehicule
-//!	Generated Date	: Tue, 7, Oct 2025  
+//!	Generated Date	: Tue, 14, Oct 2025  
 	File Path	: CodesGeneres\ModeAnimation\_SysVehicule.cpp
 *********************************************************************/
 
@@ -31,6 +31,8 @@
 
 #define _MonPkg__SysVehicule_init_SERIALIZE OM_NO_OP
 
+#define _MonPkg__SysVehicule_regulateur_SERIALIZE OM_NO_OP
+
 #define _MonPkg__SysVehicule_setMajor_SERIALIZE OM_NO_OP
 
 #define _MonPkg__SysVehicule_setMinus_SERIALIZE OM_NO_OP
@@ -50,6 +52,10 @@
 #define OMAnim__MonPkg__SysVehicule_setKey_bool_UNSERIALIZE_ARGS OP_UNSER(OMDestructiveString2X,p_key)
 
 #define OMAnim__MonPkg__SysVehicule_setKey_bool_SERIALIZE_RET_VAL
+
+#define OMAnim__MonPkg__SysVehicule_setReg_bool_UNSERIALIZE_ARGS OP_UNSER(OMDestructiveString2X,p_reg)
+
+#define OMAnim__MonPkg__SysVehicule_setReg_bool_SERIALIZE_RET_VAL
 
 #define OMAnim__MonPkg__SysVehicule_setThrottle_double_UNSERIALIZE_ARGS OP_UNSER(OMDestructiveString2X,p_throttle)
 
@@ -137,7 +143,7 @@ void _SysVehicule::init() {
     //#]
 }
 
-_SysVehicule::_SysVehicule(IOxfActive* theActiveContext) : MAX_BRAKE(10), MAX_SPEED(120), MAX_THROTTLE(10.0), _simu(true), accelPedal(0.0), airResistance(0.0), alpha(0), brakePedal(0.0), distance(0), error(0.0), fdist(0.0), flag(false), fspeed(0.0), ignition(false), key(false), speed(0), steady(0.0), throttle(0.0), vitesseConsigne(speed + error) {
+_SysVehicule::_SysVehicule(IOxfActive* theActiveContext) : MAX_BRAKE(10), MAX_SPEED(120), MAX_THROTTLE(10.0), _simu(true), accelPedal(0.0), airResistance(0.0), alpha(0), brakePedal(0.0), distance(0), error(0.0), fdist(0.0), flag(false), fspeed(0.0), ignition(false), key(false), reg(false), speed(0), steady(0.0), throttle(0.0), vitesseConsigne(0.0) {
     NOTIFY_ACTIVE_CONSTRUCTOR(_SysVehicule, _SysVehicule(), 0, _MonPkg__SysVehicule__SysVehicule_SERIALIZE);
     setActiveContext(this, true);
     initStatechart();
@@ -268,13 +274,8 @@ double _SysVehicule::getThrottle() {
     return throttle;
 }
 
-int _SysVehicule::getVitesseConsigne() {
+double _SysVehicule::getVitesseConsigne() {
     return vitesseConsigne;
-}
-
-void _SysVehicule::setVitesseConsigne(int p_vitesseConsigne) {
-    vitesseConsigne = p_vitesseConsigne;
-    NOTIFY_SET_OPERATION;
 }
 
 bool _SysVehicule::startBehavior() {
@@ -285,6 +286,15 @@ bool _SysVehicule::startBehavior() {
             startDispatching();
         }
     return done;
+}
+
+void _SysVehicule::regulateur() {
+    NOTIFY_OPERATION(regulateur, regulateur(), 0, _MonPkg__SysVehicule_regulateur_SERIALIZE);
+    //#[ operation regulateur()
+    error  = (double) (5*(vitesseConsigne - speed) / 6.0);
+    steady = (double) (vitesseConsigne / 12.0);
+    throttle = steady+error;
+    //#]
 }
 
 void _SysVehicule::setMajor() {
@@ -321,6 +331,15 @@ void _SysVehicule::setKey(bool p_key) {
     NOTIFY_SET_OPERATION;
 }
 
+bool _SysVehicule::getReg() {
+    return reg;
+}
+
+void _SysVehicule::setReg(bool p_reg) {
+    reg = p_reg;
+    NOTIFY_SET_OPERATION;
+}
+
 void _SysVehicule::setSpeed(int p_speed) {
     speed = p_speed;
     NOTIFY_SET_OPERATION;
@@ -331,23 +350,31 @@ void _SysVehicule::setThrottle(double p_throttle) {
     NOTIFY_SET_OPERATION;
 }
 
+void _SysVehicule::setVitesseConsigne(double p_vitesseConsigne) {
+    vitesseConsigne = p_vitesseConsigne;
+    NOTIFY_SET_OPERATION;
+}
+
 void _SysVehicule::initStatechart() {
     rootState_subState = OMNonState;
     rootState_active = OMNonState;
     state_9_subState = OMNonState;
     state_9_active = OMNonState;
     state_9_timeout = NULL;
+    state_33_subState = OMNonState;
+    state_33_active = OMNonState;
+    state_33_timeout = NULL;
     state_2_subState = OMNonState;
     state_2_active = OMNonState;
     state_2_timeout = NULL;
     state_1_subState = OMNonState;
     state_1_active = OMNonState;
     state_1_timeout = NULL;
-    Regulateur_subState = OMNonState;
 }
 
 void _SysVehicule::cancelTimeouts() {
     cancel(state_9_timeout);
+    cancel(state_33_timeout);
     cancel(state_2_timeout);
     cancel(state_1_timeout);
 }
@@ -357,6 +384,11 @@ bool _SysVehicule::cancelTimeout(const IOxfTimeout* arg) {
     if(state_9_timeout == arg)
         {
             state_9_timeout = NULL;
+            res = true;
+        }
+    if(state_33_timeout == arg)
+        {
+            state_33_timeout = NULL;
             res = true;
         }
     if(state_2_timeout == arg)
@@ -402,24 +434,6 @@ IOxfReactive::TakeEventStatus _SysVehicule::rootState_processEvent() {
             res = state_4_handleEvent();
         }
         break;
-        // State consigne
-        case consigne:
-        {
-            res = consigne_handleEvent();
-        }
-        break;
-        // State Major
-        case Major:
-        {
-            res = Major_handleEvent();
-        }
-        break;
-        // State Minus
-        case Minus:
-        {
-            res = Minus_handleEvent();
-        }
-        break;
         default:
             break;
     }
@@ -454,6 +468,7 @@ void _SysVehicule::state_0_entDef() {
     state_1_entDef();
     state_2_entDef();
     state_9_entDef();
+    state_33_entDef();
 }
 
 void _SysVehicule::state_0_exit() {
@@ -509,6 +524,7 @@ void _SysVehicule::state_0_exit() {
     }
     state_9_subState = OMNonState;
     NOTIFY_STATE_EXITED("ROOT.state_0.state_9");
+    state_33_exit();
     
     NOTIFY_STATE_EXITED("ROOT.state_0");
 }
@@ -542,22 +558,14 @@ IOxfReactive::TakeEventStatus _SysVehicule::state_0_processEvent() {
                     return res;
                 }
         }
-    if(res == eventNotConsumed)
+    // State state_33
+    if(state_33_processEvent() != eventNotConsumed)
         {
-            res = state_0_handleEvent();
-        }
-    return res;
-}
-
-IOxfReactive::TakeEventStatus _SysVehicule::state_0_handleEvent() {
-    IOxfReactive::TakeEventStatus res = eventNotConsumed;
-    if(IS_EVENT_TYPE_OF(regOn__MonPkg_id))
-        {
-            NOTIFY_TRANSITION_STARTED("13");
-            state_0_exit();
-            Regulateur_entDef();
-            NOTIFY_TRANSITION_TERMINATED("13");
             res = eventConsumed;
+            if(!IS_IN(state_0))
+                {
+                    return res;
+                }
         }
     
     return res;
@@ -748,6 +756,350 @@ IOxfReactive::TakeEventStatus _SysVehicule::Accelerartion_handleEvent() {
     return res;
 }
 
+void _SysVehicule::state_33_entDef() {
+    NOTIFY_STATE_ENTERED("ROOT.state_0.state_33");
+    NOTIFY_TRANSITION_STARTED("19");
+    NOTIFY_STATE_ENTERED("ROOT.state_0.state_33.regOff");
+    pushNullTransition();
+    state_33_subState = regOff;
+    state_33_active = regOff;
+    state_33_timeout = scheduleTimeout(50, "ROOT.state_0.state_33.regOff");
+    NOTIFY_TRANSITION_TERMINATED("19");
+}
+
+void _SysVehicule::state_33_exit() {
+    switch (state_33_subState) {
+        // State Minus
+        case Minus:
+        {
+            popNullTransition();
+            NOTIFY_STATE_EXITED("ROOT.state_0.state_33.Minus");
+        }
+        break;
+        // State regOn
+        case regOn:
+        {
+            popNullTransition();
+            cancel(state_33_timeout);
+            //#[ state state_0.state_33.regOn.(Exit) 
+            flag = false;
+            //#]
+            NOTIFY_STATE_EXITED("ROOT.state_0.state_33.regOn");
+        }
+        break;
+        // State regOff
+        case regOff:
+        {
+            popNullTransition();
+            cancel(state_33_timeout);
+            NOTIFY_STATE_EXITED("ROOT.state_0.state_33.regOff");
+        }
+        break;
+        // State regAccel
+        case regAccel:
+        {
+            popNullTransition();
+            cancel(state_33_timeout);
+            NOTIFY_STATE_EXITED("ROOT.state_0.state_33.regAccel");
+        }
+        break;
+        // State Major
+        case Major:
+        {
+            popNullTransition();
+            NOTIFY_STATE_EXITED("ROOT.state_0.state_33.Major");
+        }
+        break;
+        default:
+            break;
+    }
+    state_33_subState = OMNonState;
+    
+    NOTIFY_STATE_EXITED("ROOT.state_0.state_33");
+}
+
+IOxfReactive::TakeEventStatus _SysVehicule::state_33_processEvent() {
+    IOxfReactive::TakeEventStatus res = eventNotConsumed;
+    switch (state_33_active) {
+        // State Minus
+        case Minus:
+        {
+            if(IS_EVENT_TYPE_OF(OMNullEventId))
+                {
+                    //## transition 27 
+                    if(flag == true)
+                        {
+                            NOTIFY_TRANSITION_STARTED("27");
+                            popNullTransition();
+                            NOTIFY_STATE_EXITED("ROOT.state_0.state_33.Minus");
+                            NOTIFY_STATE_ENTERED("ROOT.state_0.state_33.regOn");
+                            pushNullTransition();
+                            state_33_subState = regOn;
+                            state_33_active = regOn;
+                            //#[ state state_0.state_33.regOn.(Entry) 
+                            regulateur()
+                            ;
+                            //#]
+                            state_33_timeout = scheduleTimeout(50, "ROOT.state_0.state_33.regOn");
+                            NOTIFY_TRANSITION_TERMINATED("27");
+                            res = eventConsumed;
+                        }
+                }
+            
+            
+        }
+        break;
+        // State regOn
+        case regOn:
+        {
+            res = regOn_handleEvent();
+        }
+        break;
+        // State regOff
+        case regOff:
+        {
+            if(IS_EVENT_TYPE_OF(OMTimeoutEventId))
+                {
+                    if(getCurrentEvent() == state_33_timeout)
+                        {
+                            NOTIFY_TRANSITION_STARTED("22");
+                            popNullTransition();
+                            cancel(state_33_timeout);
+                            NOTIFY_STATE_EXITED("ROOT.state_0.state_33.regOff");
+                            NOTIFY_STATE_ENTERED("ROOT.state_0.state_33.regOff");
+                            pushNullTransition();
+                            state_33_subState = regOff;
+                            state_33_active = regOff;
+                            state_33_timeout = scheduleTimeout(50, "ROOT.state_0.state_33.regOff");
+                            NOTIFY_TRANSITION_TERMINATED("22");
+                            res = eventConsumed;
+                        }
+                }
+            else if(IS_EVENT_TYPE_OF(OMNullEventId))
+                {
+                    //## transition 20 
+                    if(reg==true && speed>=30 && brakePedal < 0.2)
+                        {
+                            NOTIFY_TRANSITION_STARTED("20");
+                            popNullTransition();
+                            cancel(state_33_timeout);
+                            NOTIFY_STATE_EXITED("ROOT.state_0.state_33.regOff");
+                            //#[ transition 20 
+                            vitesseConsigne = speed ;
+                            //#]
+                            NOTIFY_STATE_ENTERED("ROOT.state_0.state_33.regOn");
+                            pushNullTransition();
+                            state_33_subState = regOn;
+                            state_33_active = regOn;
+                            //#[ state state_0.state_33.regOn.(Entry) 
+                            regulateur()
+                            ;
+                            //#]
+                            state_33_timeout = scheduleTimeout(50, "ROOT.state_0.state_33.regOn");
+                            NOTIFY_TRANSITION_TERMINATED("20");
+                            res = eventConsumed;
+                        }
+                }
+            
+            
+        }
+        break;
+        // State regAccel
+        case regAccel:
+        {
+            if(IS_EVENT_TYPE_OF(OMTimeoutEventId))
+                {
+                    if(getCurrentEvent() == state_33_timeout)
+                        {
+                            NOTIFY_TRANSITION_STARTED("26");
+                            popNullTransition();
+                            cancel(state_33_timeout);
+                            NOTIFY_STATE_EXITED("ROOT.state_0.state_33.regAccel");
+                            NOTIFY_STATE_ENTERED("ROOT.state_0.state_33.regAccel");
+                            pushNullTransition();
+                            state_33_subState = regAccel;
+                            state_33_active = regAccel;
+                            state_33_timeout = scheduleTimeout(50, "ROOT.state_0.state_33.regAccel");
+                            NOTIFY_TRANSITION_TERMINATED("26");
+                            res = eventConsumed;
+                        }
+                }
+            else if(IS_EVENT_TYPE_OF(OMNullEventId))
+                {
+                    //## transition 25 
+                    if(accelPedal <0.2)
+                        {
+                            NOTIFY_TRANSITION_STARTED("25");
+                            popNullTransition();
+                            cancel(state_33_timeout);
+                            NOTIFY_STATE_EXITED("ROOT.state_0.state_33.regAccel");
+                            NOTIFY_STATE_ENTERED("ROOT.state_0.state_33.regOn");
+                            pushNullTransition();
+                            state_33_subState = regOn;
+                            state_33_active = regOn;
+                            //#[ state state_0.state_33.regOn.(Entry) 
+                            regulateur()
+                            ;
+                            //#]
+                            state_33_timeout = scheduleTimeout(50, "ROOT.state_0.state_33.regOn");
+                            NOTIFY_TRANSITION_TERMINATED("25");
+                            res = eventConsumed;
+                        }
+                }
+            
+            
+        }
+        break;
+        // State Major
+        case Major:
+        {
+            if(IS_EVENT_TYPE_OF(OMNullEventId))
+                {
+                    //## transition 28 
+                    if(flag==true)
+                        {
+                            NOTIFY_TRANSITION_STARTED("28");
+                            popNullTransition();
+                            NOTIFY_STATE_EXITED("ROOT.state_0.state_33.Major");
+                            NOTIFY_STATE_ENTERED("ROOT.state_0.state_33.regOn");
+                            pushNullTransition();
+                            state_33_subState = regOn;
+                            state_33_active = regOn;
+                            //#[ state state_0.state_33.regOn.(Entry) 
+                            regulateur()
+                            ;
+                            //#]
+                            state_33_timeout = scheduleTimeout(50, "ROOT.state_0.state_33.regOn");
+                            NOTIFY_TRANSITION_TERMINATED("28");
+                            res = eventConsumed;
+                        }
+                }
+            
+            
+        }
+        break;
+        default:
+            break;
+    }
+    return res;
+}
+
+IOxfReactive::TakeEventStatus _SysVehicule::regOn_handleEvent() {
+    IOxfReactive::TakeEventStatus res = eventNotConsumed;
+    if(IS_EVENT_TYPE_OF(setMin__MonPkg_id))
+        {
+            NOTIFY_TRANSITION_STARTED("17");
+            popNullTransition();
+            cancel(state_33_timeout);
+            //#[ state state_0.state_33.regOn.(Exit) 
+            flag = false;
+            //#]
+            NOTIFY_STATE_EXITED("ROOT.state_0.state_33.regOn");
+            NOTIFY_STATE_ENTERED("ROOT.state_0.state_33.Minus");
+            pushNullTransition();
+            state_33_subState = Minus;
+            state_33_active = Minus;
+            //#[ state state_0.state_33.Minus.(Entry) 
+            vitesseConsigne = vitesseConsigne-1;
+            flag = true;
+            //#]
+            NOTIFY_TRANSITION_TERMINATED("17");
+            res = eventConsumed;
+        }
+    else if(IS_EVENT_TYPE_OF(OMTimeoutEventId))
+        {
+            if(getCurrentEvent() == state_33_timeout)
+                {
+                    NOTIFY_TRANSITION_STARTED("23");
+                    popNullTransition();
+                    cancel(state_33_timeout);
+                    //#[ state state_0.state_33.regOn.(Exit) 
+                    flag = false;
+                    //#]
+                    NOTIFY_STATE_EXITED("ROOT.state_0.state_33.regOn");
+                    NOTIFY_STATE_ENTERED("ROOT.state_0.state_33.regOn");
+                    pushNullTransition();
+                    state_33_subState = regOn;
+                    state_33_active = regOn;
+                    //#[ state state_0.state_33.regOn.(Entry) 
+                    regulateur()
+                    ;
+                    //#]
+                    state_33_timeout = scheduleTimeout(50, "ROOT.state_0.state_33.regOn");
+                    NOTIFY_TRANSITION_TERMINATED("23");
+                    res = eventConsumed;
+                }
+        }
+    else if(IS_EVENT_TYPE_OF(OMNullEventId))
+        {
+            //## transition 21 
+            if(reg==false || brakePedal>0.2 || speed <30)
+                {
+                    NOTIFY_TRANSITION_STARTED("21");
+                    popNullTransition();
+                    cancel(state_33_timeout);
+                    //#[ state state_0.state_33.regOn.(Exit) 
+                    flag = false;
+                    //#]
+                    NOTIFY_STATE_EXITED("ROOT.state_0.state_33.regOn");
+                    //#[ transition 21 
+                    reg=false;
+                    //#]
+                    NOTIFY_STATE_ENTERED("ROOT.state_0.state_33.regOff");
+                    pushNullTransition();
+                    state_33_subState = regOff;
+                    state_33_active = regOff;
+                    state_33_timeout = scheduleTimeout(50, "ROOT.state_0.state_33.regOff");
+                    NOTIFY_TRANSITION_TERMINATED("21");
+                    res = eventConsumed;
+                }
+            else
+                {
+                    //## transition 24 
+                    if(accelPedal > 0.2)
+                        {
+                            NOTIFY_TRANSITION_STARTED("24");
+                            popNullTransition();
+                            cancel(state_33_timeout);
+                            //#[ state state_0.state_33.regOn.(Exit) 
+                            flag = false;
+                            //#]
+                            NOTIFY_STATE_EXITED("ROOT.state_0.state_33.regOn");
+                            NOTIFY_STATE_ENTERED("ROOT.state_0.state_33.regAccel");
+                            pushNullTransition();
+                            state_33_subState = regAccel;
+                            state_33_active = regAccel;
+                            state_33_timeout = scheduleTimeout(50, "ROOT.state_0.state_33.regAccel");
+                            NOTIFY_TRANSITION_TERMINATED("24");
+                            res = eventConsumed;
+                        }
+                }
+        }
+    else if(IS_EVENT_TYPE_OF(setMaj__MonPkg_id))
+        {
+            NOTIFY_TRANSITION_STARTED("18");
+            popNullTransition();
+            cancel(state_33_timeout);
+            //#[ state state_0.state_33.regOn.(Exit) 
+            flag = false;
+            //#]
+            NOTIFY_STATE_EXITED("ROOT.state_0.state_33.regOn");
+            NOTIFY_STATE_ENTERED("ROOT.state_0.state_33.Major");
+            pushNullTransition();
+            state_33_subState = Major;
+            state_33_active = Major;
+            //#[ state state_0.state_33.Major.(Entry) 
+            vitesseConsigne = vitesseConsigne +1;
+            flag = true;
+            //#]
+            NOTIFY_TRANSITION_TERMINATED("18");
+            res = eventConsumed;
+        }
+    
+    
+    return res;
+}
+
 void _SysVehicule::state_2_entDef() {
     NOTIFY_STATE_ENTERED("ROOT.state_0.state_2");
     NOTIFY_TRANSITION_STARTED("2");
@@ -801,7 +1153,7 @@ IOxfReactive::TakeEventStatus _SysVehicule::state_2_processEvent() {
 
 void _SysVehicule::state_1_entDef() {
     NOTIFY_STATE_ENTERED("ROOT.state_0.state_1");
-    NOTIFY_TRANSITION_STARTED("16");
+    NOTIFY_TRANSITION_STARTED("14");
     NOTIFY_STATE_ENTERED("ROOT.state_0.state_1.motorOff");
     pushNullTransition();
     state_1_subState = motorOff;
@@ -810,7 +1162,7 @@ void _SysVehicule::state_1_entDef() {
     arreter();
     //#]
     state_1_timeout = scheduleTimeout(50, "ROOT.state_0.state_1.motorOff");
-    NOTIFY_TRANSITION_TERMINATED("16");
+    NOTIFY_TRANSITION_TERMINATED("14");
 }
 
 IOxfReactive::TakeEventStatus _SysVehicule::state_1_processEvent() {
@@ -823,7 +1175,7 @@ IOxfReactive::TakeEventStatus _SysVehicule::state_1_processEvent() {
                 {
                     if(getCurrentEvent() == state_1_timeout)
                         {
-                            NOTIFY_TRANSITION_STARTED("18");
+                            NOTIFY_TRANSITION_STARTED("16");
                             popNullTransition();
                             cancel(state_1_timeout);
                             NOTIFY_STATE_EXITED("ROOT.state_0.state_1.motorOn");
@@ -835,16 +1187,16 @@ IOxfReactive::TakeEventStatus _SysVehicule::state_1_processEvent() {
                             demarrer();
                             //#]
                             state_1_timeout = scheduleTimeout(50, "ROOT.state_0.state_1.motorOn");
-                            NOTIFY_TRANSITION_TERMINATED("18");
+                            NOTIFY_TRANSITION_TERMINATED("16");
                             res = eventConsumed;
                         }
                 }
             else if(IS_EVENT_TYPE_OF(OMNullEventId))
                 {
-                    //## transition 14 
+                    //## transition 12 
                     if(key == false)
                         {
-                            NOTIFY_TRANSITION_STARTED("14");
+                            NOTIFY_TRANSITION_STARTED("12");
                             popNullTransition();
                             cancel(state_1_timeout);
                             NOTIFY_STATE_EXITED("ROOT.state_0.state_1.motorOn");
@@ -856,7 +1208,7 @@ IOxfReactive::TakeEventStatus _SysVehicule::state_1_processEvent() {
                             arreter();
                             //#]
                             state_1_timeout = scheduleTimeout(50, "ROOT.state_0.state_1.motorOff");
-                            NOTIFY_TRANSITION_TERMINATED("14");
+                            NOTIFY_TRANSITION_TERMINATED("12");
                             res = eventConsumed;
                         }
                 }
@@ -871,7 +1223,7 @@ IOxfReactive::TakeEventStatus _SysVehicule::state_1_processEvent() {
                 {
                     if(getCurrentEvent() == state_1_timeout)
                         {
-                            NOTIFY_TRANSITION_STARTED("17");
+                            NOTIFY_TRANSITION_STARTED("15");
                             popNullTransition();
                             cancel(state_1_timeout);
                             NOTIFY_STATE_EXITED("ROOT.state_0.state_1.motorOff");
@@ -883,16 +1235,16 @@ IOxfReactive::TakeEventStatus _SysVehicule::state_1_processEvent() {
                             arreter();
                             //#]
                             state_1_timeout = scheduleTimeout(50, "ROOT.state_0.state_1.motorOff");
-                            NOTIFY_TRANSITION_TERMINATED("17");
+                            NOTIFY_TRANSITION_TERMINATED("15");
                             res = eventConsumed;
                         }
                 }
             else if(IS_EVENT_TYPE_OF(OMNullEventId))
                 {
-                    //## transition 15 
+                    //## transition 13 
                     if(key == true)
                         {
-                            NOTIFY_TRANSITION_STARTED("15");
+                            NOTIFY_TRANSITION_STARTED("13");
                             popNullTransition();
                             cancel(state_1_timeout);
                             NOTIFY_STATE_EXITED("ROOT.state_0.state_1.motorOff");
@@ -904,7 +1256,7 @@ IOxfReactive::TakeEventStatus _SysVehicule::state_1_processEvent() {
                             demarrer();
                             //#]
                             state_1_timeout = scheduleTimeout(50, "ROOT.state_0.state_1.motorOn");
-                            NOTIFY_TRANSITION_TERMINATED("15");
+                            NOTIFY_TRANSITION_TERMINATED("13");
                             res = eventConsumed;
                         }
                 }
@@ -915,160 +1267,6 @@ IOxfReactive::TakeEventStatus _SysVehicule::state_1_processEvent() {
         default:
             break;
     }
-    return res;
-}
-
-void _SysVehicule::Regulateur_entDef() {
-    NOTIFY_STATE_ENTERED("ROOT.Regulateur");
-    rootState_subState = Regulateur;
-    NOTIFY_TRANSITION_STARTED("19");
-    NOTIFY_STATE_ENTERED("ROOT.Regulateur.consigne");
-    Regulateur_subState = consigne;
-    rootState_active = consigne;
-    //#[ state Regulateur.consigne.(Entry) 
-    flag = false;
-    //#]
-    NOTIFY_TRANSITION_TERMINATED("19");
-}
-
-IOxfReactive::TakeEventStatus _SysVehicule::RegulateurTakeregOff() {
-    IOxfReactive::TakeEventStatus res = eventNotConsumed;
-    NOTIFY_TRANSITION_STARTED("12");
-    switch (Regulateur_subState) {
-        // State consigne
-        case consigne:
-        {
-            NOTIFY_STATE_EXITED("ROOT.Regulateur.consigne");
-        }
-        break;
-        // State Major
-        case Major:
-        {
-            popNullTransition();
-            NOTIFY_STATE_EXITED("ROOT.Regulateur.Major");
-        }
-        break;
-        // State Minus
-        case Minus:
-        {
-            popNullTransition();
-            NOTIFY_STATE_EXITED("ROOT.Regulateur.Minus");
-        }
-        break;
-        default:
-            break;
-    }
-    Regulateur_subState = OMNonState;
-    NOTIFY_STATE_EXITED("ROOT.Regulateur");
-    state_0_entDef();
-    NOTIFY_TRANSITION_TERMINATED("12");
-    res = eventConsumed;
-    return res;
-}
-
-IOxfReactive::TakeEventStatus _SysVehicule::Regulateur_handleEvent() {
-    IOxfReactive::TakeEventStatus res = eventNotConsumed;
-    if(IS_EVENT_TYPE_OF(regOff__MonPkg_id))
-        {
-            res = RegulateurTakeregOff();
-        }
-    
-    return res;
-}
-
-IOxfReactive::TakeEventStatus _SysVehicule::Minus_handleEvent() {
-    IOxfReactive::TakeEventStatus res = eventNotConsumed;
-    if(IS_EVENT_TYPE_OF(OMNullEventId))
-        {
-            //## transition 22 
-            if(flag==true)
-                {
-                    NOTIFY_TRANSITION_STARTED("22");
-                    popNullTransition();
-                    NOTIFY_STATE_EXITED("ROOT.Regulateur.Minus");
-                    NOTIFY_STATE_ENTERED("ROOT.Regulateur.consigne");
-                    Regulateur_subState = consigne;
-                    rootState_active = consigne;
-                    //#[ state Regulateur.consigne.(Entry) 
-                    flag = false;
-                    //#]
-                    NOTIFY_TRANSITION_TERMINATED("22");
-                    res = eventConsumed;
-                }
-        }
-    
-    if(res == eventNotConsumed)
-        {
-            res = Regulateur_handleEvent();
-        }
-    return res;
-}
-
-IOxfReactive::TakeEventStatus _SysVehicule::Major_handleEvent() {
-    IOxfReactive::TakeEventStatus res = eventNotConsumed;
-    if(IS_EVENT_TYPE_OF(OMNullEventId))
-        {
-            //## transition 23 
-            if(flag==true)
-                {
-                    NOTIFY_TRANSITION_STARTED("23");
-                    popNullTransition();
-                    NOTIFY_STATE_EXITED("ROOT.Regulateur.Major");
-                    NOTIFY_STATE_ENTERED("ROOT.Regulateur.consigne");
-                    Regulateur_subState = consigne;
-                    rootState_active = consigne;
-                    //#[ state Regulateur.consigne.(Entry) 
-                    flag = false;
-                    //#]
-                    NOTIFY_TRANSITION_TERMINATED("23");
-                    res = eventConsumed;
-                }
-        }
-    
-    if(res == eventNotConsumed)
-        {
-            res = Regulateur_handleEvent();
-        }
-    return res;
-}
-
-IOxfReactive::TakeEventStatus _SysVehicule::consigne_handleEvent() {
-    IOxfReactive::TakeEventStatus res = eventNotConsumed;
-    if(IS_EVENT_TYPE_OF(setMin__MonPkg_id))
-        {
-            NOTIFY_TRANSITION_STARTED("20");
-            NOTIFY_STATE_EXITED("ROOT.Regulateur.consigne");
-            NOTIFY_STATE_ENTERED("ROOT.Regulateur.Minus");
-            pushNullTransition();
-            Regulateur_subState = Minus;
-            rootState_active = Minus;
-            //#[ state Regulateur.Minus.(Entry) 
-            vitesseConsigne = vitesseConsigne -1;
-            flag = true;
-            //#]
-            NOTIFY_TRANSITION_TERMINATED("20");
-            res = eventConsumed;
-        }
-    else if(IS_EVENT_TYPE_OF(setMaj__MonPkg_id))
-        {
-            NOTIFY_TRANSITION_STARTED("21");
-            NOTIFY_STATE_EXITED("ROOT.Regulateur.consigne");
-            NOTIFY_STATE_ENTERED("ROOT.Regulateur.Major");
-            pushNullTransition();
-            Regulateur_subState = Major;
-            rootState_active = Major;
-            //#[ state Regulateur.Major.(Entry) 
-            vitesseConsigne = vitesseConsigne +1;
-            flag = true;
-            //#]
-            NOTIFY_TRANSITION_TERMINATED("21");
-            res = eventConsumed;
-        }
-    
-    if(res == eventNotConsumed)
-        {
-            res = Regulateur_handleEvent();
-        }
     return res;
 }
 
@@ -1094,6 +1292,7 @@ void OMAnimated_SysVehicule::serializeAttributes(AOMSAttributes* aomsAttributes)
     aomsAttributes->addAttribute("vitesseConsigne", x2String(myReal->vitesseConsigne));
     aomsAttributes->addAttribute("key", x2String(myReal->key));
     aomsAttributes->addAttribute("flag", x2String(myReal->flag));
+    aomsAttributes->addAttribute("reg", x2String(myReal->reg));
 }
 
 void OMAnimated_SysVehicule::rootState_serializeStates(AOMSState* aomsState) const {
@@ -1107,11 +1306,6 @@ void OMAnimated_SysVehicule::rootState_serializeStates(AOMSState* aomsState) con
         case _SysVehicule::state_4:
         {
             state_4_serializeStates(aomsState);
-        }
-        break;
-        case _SysVehicule::Regulateur:
-        {
-            Regulateur_serializeStates(aomsState);
         }
         break;
         default:
@@ -1128,6 +1322,7 @@ void OMAnimated_SysVehicule::state_0_serializeStates(AOMSState* aomsState) const
     state_1_serializeStates(aomsState);
     state_2_serializeStates(aomsState);
     state_9_serializeStates(aomsState);
+    state_33_serializeStates(aomsState);
 }
 
 void OMAnimated_SysVehicule::state_9_serializeStates(AOMSState* aomsState) const {
@@ -1163,6 +1358,59 @@ void OMAnimated_SysVehicule::Freint_serializeStates(AOMSState* aomsState) const 
 
 void OMAnimated_SysVehicule::Accelerartion_serializeStates(AOMSState* aomsState) const {
     aomsState->addState("ROOT.state_0.state_9.Accelerartion");
+}
+
+void OMAnimated_SysVehicule::state_33_serializeStates(AOMSState* aomsState) const {
+    aomsState->addState("ROOT.state_0.state_33");
+    switch (myReal->state_33_subState) {
+        case _SysVehicule::Minus:
+        {
+            Minus_serializeStates(aomsState);
+        }
+        break;
+        case _SysVehicule::regOn:
+        {
+            regOn_serializeStates(aomsState);
+        }
+        break;
+        case _SysVehicule::regOff:
+        {
+            regOff_serializeStates(aomsState);
+        }
+        break;
+        case _SysVehicule::regAccel:
+        {
+            regAccel_serializeStates(aomsState);
+        }
+        break;
+        case _SysVehicule::Major:
+        {
+            Major_serializeStates(aomsState);
+        }
+        break;
+        default:
+            break;
+    }
+}
+
+void OMAnimated_SysVehicule::regOn_serializeStates(AOMSState* aomsState) const {
+    aomsState->addState("ROOT.state_0.state_33.regOn");
+}
+
+void OMAnimated_SysVehicule::regOff_serializeStates(AOMSState* aomsState) const {
+    aomsState->addState("ROOT.state_0.state_33.regOff");
+}
+
+void OMAnimated_SysVehicule::regAccel_serializeStates(AOMSState* aomsState) const {
+    aomsState->addState("ROOT.state_0.state_33.regAccel");
+}
+
+void OMAnimated_SysVehicule::Minus_serializeStates(AOMSState* aomsState) const {
+    aomsState->addState("ROOT.state_0.state_33.Minus");
+}
+
+void OMAnimated_SysVehicule::Major_serializeStates(AOMSState* aomsState) const {
+    aomsState->addState("ROOT.state_0.state_33.Major");
 }
 
 void OMAnimated_SysVehicule::state_2_serializeStates(AOMSState* aomsState) const {
@@ -1202,41 +1450,6 @@ void OMAnimated_SysVehicule::motorOn_serializeStates(AOMSState* aomsState) const
 void OMAnimated_SysVehicule::motorOff_serializeStates(AOMSState* aomsState) const {
     aomsState->addState("ROOT.state_0.state_1.motorOff");
 }
-
-void OMAnimated_SysVehicule::Regulateur_serializeStates(AOMSState* aomsState) const {
-    aomsState->addState("ROOT.Regulateur");
-    switch (myReal->Regulateur_subState) {
-        case _SysVehicule::consigne:
-        {
-            consigne_serializeStates(aomsState);
-        }
-        break;
-        case _SysVehicule::Major:
-        {
-            Major_serializeStates(aomsState);
-        }
-        break;
-        case _SysVehicule::Minus:
-        {
-            Minus_serializeStates(aomsState);
-        }
-        break;
-        default:
-            break;
-    }
-}
-
-void OMAnimated_SysVehicule::Minus_serializeStates(AOMSState* aomsState) const {
-    aomsState->addState("ROOT.Regulateur.Minus");
-}
-
-void OMAnimated_SysVehicule::Major_serializeStates(AOMSState* aomsState) const {
-    aomsState->addState("ROOT.Regulateur.Major");
-}
-
-void OMAnimated_SysVehicule::consigne_serializeStates(AOMSState* aomsState) const {
-    aomsState->addState("ROOT.Regulateur.consigne");
-}
 //#]
 
 IMPLEMENT_REACTIVE_META_P(_SysVehicule, _MonPkg, _MonPkg, false, OMAnimated_SysVehicule)
@@ -1256,6 +1469,10 @@ IMPLEMENT_OP_CALL(_MonPkg__SysVehicule_setBrakePedal_double, _SysVehicule, setBr
 IMPLEMENT_META_OP(OMAnimated_SysVehicule, _MonPkg__SysVehicule_setKey_bool, "setKey", FALSE, "setKey(bool)", 1)
 
 IMPLEMENT_OP_CALL(_MonPkg__SysVehicule_setKey_bool, _SysVehicule, setKey(p_key), NO_OP())
+
+IMPLEMENT_META_OP(OMAnimated_SysVehicule, _MonPkg__SysVehicule_setReg_bool, "setReg", FALSE, "setReg(bool)", 1)
+
+IMPLEMENT_OP_CALL(_MonPkg__SysVehicule_setReg_bool, _SysVehicule, setReg(p_reg), NO_OP())
 
 IMPLEMENT_META_OP(OMAnimated_SysVehicule, _MonPkg__SysVehicule_setThrottle_double, "setThrottle", FALSE, "setThrottle(double)", 1)
 

@@ -4,7 +4,7 @@
 	Component	: CodesGeneres 
 	Configuration 	: ModeAnimation
 	Model Element	: _SysVehicule
-//!	Generated Date	: Tue, 7, Oct 2025  
+//!	Generated Date	: Tue, 14, Oct 2025  
 	File Path	: CodesGeneres\ModeAnimation\_SysVehicule.h
 *********************************************************************/
 
@@ -47,6 +47,8 @@
 #define OMAnim__MonPkg__SysVehicule_setBrakePedal_double_ARGS_DECLARATION double p_brakePedal;
 
 #define OMAnim__MonPkg__SysVehicule_setKey_bool_ARGS_DECLARATION bool p_key;
+
+#define OMAnim__MonPkg__SysVehicule_setReg_bool_ARGS_DECLARATION bool p_reg;
 
 #define OMAnim__MonPkg__SysVehicule_setThrottle_double_ARGS_DECLARATION double p_throttle;
 //#]
@@ -131,7 +133,7 @@ protected :
     
     double steady;		//## attribute steady
     
-    int vitesseConsigne;		//## attribute vitesseConsigne
+    double vitesseConsigne;		//## attribute vitesseConsigne
 
 public :
 
@@ -229,13 +231,13 @@ public :
     double getThrottle();
     
     //## auto_generated
-    int getVitesseConsigne();
-    
-    //## auto_generated
-    void setVitesseConsigne(int p_vitesseConsigne);
+    double getVitesseConsigne();
     
     //## auto_generated
     virtual bool startBehavior();
+    
+    //## operation regulateur()
+    void regulateur();
     
     //## operation setMajor()
     void setMajor();
@@ -259,10 +261,19 @@ public :
     void setKey(bool p_key);
     
     //## auto_generated
+    bool getReg();
+    
+    //## auto_generated
+    void setReg(bool p_reg);
+    
+    //## auto_generated
     void setSpeed(int p_speed);
     
     //## auto_generated
     void setThrottle(double p_throttle);
+    
+    //## auto_generated
+    void setVitesseConsigne(double p_vitesseConsigne);
 
 protected :
 
@@ -278,6 +289,8 @@ protected :
     bool flag;		//## attribute flag
     
     bool key;		//## attribute key
+    
+    bool reg;		//## attribute reg
 
 public :
 
@@ -314,9 +327,6 @@ public :
     //## statechart_method
     IOxfReactive::TakeEventStatus state_0_processEvent();
     
-    //## statechart_method
-    IOxfReactive::TakeEventStatus state_0_handleEvent();
-    
     // state_9:
     //## statechart_method
     inline bool state_9_IN() const;
@@ -341,6 +351,42 @@ public :
     
     //## statechart_method
     IOxfReactive::TakeEventStatus Accelerartion_handleEvent();
+    
+    // state_33:
+    //## statechart_method
+    inline bool state_33_IN() const;
+    
+    //## statechart_method
+    void state_33_entDef();
+    
+    //## statechart_method
+    void state_33_exit();
+    
+    //## statechart_method
+    IOxfReactive::TakeEventStatus state_33_processEvent();
+    
+    // regOn:
+    //## statechart_method
+    inline bool regOn_IN() const;
+    
+    //## statechart_method
+    IOxfReactive::TakeEventStatus regOn_handleEvent();
+    
+    // regOff:
+    //## statechart_method
+    inline bool regOff_IN() const;
+    
+    // regAccel:
+    //## statechart_method
+    inline bool regAccel_IN() const;
+    
+    // Minus:
+    //## statechart_method
+    inline bool Minus_IN() const;
+    
+    // Major:
+    //## statechart_method
+    inline bool Major_IN() const;
     
     // state_2:
     //## statechart_method
@@ -376,40 +422,6 @@ public :
     // motorOff:
     //## statechart_method
     inline bool motorOff_IN() const;
-    
-    // Regulateur:
-    //## statechart_method
-    inline bool Regulateur_IN() const;
-    
-    //## statechart_method
-    void Regulateur_entDef();
-    
-    //## statechart_method
-    IOxfReactive::TakeEventStatus RegulateurTakeregOff();
-    
-    //## statechart_method
-    IOxfReactive::TakeEventStatus Regulateur_handleEvent();
-    
-    // Minus:
-    //## statechart_method
-    inline bool Minus_IN() const;
-    
-    //## statechart_method
-    IOxfReactive::TakeEventStatus Minus_handleEvent();
-    
-    // Major:
-    //## statechart_method
-    inline bool Major_IN() const;
-    
-    //## statechart_method
-    IOxfReactive::TakeEventStatus Major_handleEvent();
-    
-    // consigne:
-    //## statechart_method
-    inline bool consigne_IN() const;
-    
-    //## statechart_method
-    IOxfReactive::TakeEventStatus consigne_handleEvent();
 
 protected :
 
@@ -422,15 +434,17 @@ protected :
         Neutre = 4,
         Freint = 5,
         Accelerartion = 6,
-        state_2 = 7,
-        Calcul_Vitesse_Distance = 8,
-        state_1 = 9,
-        motorOn = 10,
-        motorOff = 11,
-        Regulateur = 12,
-        Minus = 13,
-        Major = 14,
-        consigne = 15
+        state_33 = 7,
+        regOn = 8,
+        regOff = 9,
+        regAccel = 10,
+        Minus = 11,
+        Major = 12,
+        state_2 = 13,
+        Calcul_Vitesse_Distance = 14,
+        state_1 = 15,
+        motorOn = 16,
+        motorOff = 17
     };
     
     int rootState_subState;
@@ -443,6 +457,12 @@ protected :
     
     IOxfTimeout* state_9_timeout;
     
+    int state_33_subState;
+    
+    int state_33_active;
+    
+    IOxfTimeout* state_33_timeout;
+    
     int state_2_subState;
     
     int state_2_active;
@@ -454,8 +474,6 @@ protected :
     int state_1_active;
     
     IOxfTimeout* state_1_timeout;
-    
-    int Regulateur_subState;
 //#]
 };
 
@@ -467,6 +485,8 @@ DECLARE_OPERATION_CLASS(_MonPkg__SysVehicule_setAlpha_int)
 DECLARE_OPERATION_CLASS(_MonPkg__SysVehicule_setBrakePedal_double)
 
 DECLARE_OPERATION_CLASS(_MonPkg__SysVehicule_setKey_bool)
+
+DECLARE_OPERATION_CLASS(_MonPkg__SysVehicule_setReg_bool)
 
 DECLARE_OPERATION_CLASS(_MonPkg__SysVehicule_setThrottle_double)
 
@@ -481,6 +501,8 @@ class OMAnimated_SysVehicule : virtual public AOMInstance {
     DECLARE_META_OP(_MonPkg__SysVehicule_setBrakePedal_double)
     
     DECLARE_META_OP(_MonPkg__SysVehicule_setKey_bool)
+    
+    DECLARE_META_OP(_MonPkg__SysVehicule_setReg_bool)
     
     DECLARE_META_OP(_MonPkg__SysVehicule_setThrottle_double)
     
@@ -512,6 +534,24 @@ public :
     void Accelerartion_serializeStates(AOMSState* aomsState) const;
     
     //## statechart_method
+    void state_33_serializeStates(AOMSState* aomsState) const;
+    
+    //## statechart_method
+    void regOn_serializeStates(AOMSState* aomsState) const;
+    
+    //## statechart_method
+    void regOff_serializeStates(AOMSState* aomsState) const;
+    
+    //## statechart_method
+    void regAccel_serializeStates(AOMSState* aomsState) const;
+    
+    //## statechart_method
+    void Minus_serializeStates(AOMSState* aomsState) const;
+    
+    //## statechart_method
+    void Major_serializeStates(AOMSState* aomsState) const;
+    
+    //## statechart_method
     void state_2_serializeStates(AOMSState* aomsState) const;
     
     //## statechart_method
@@ -525,18 +565,6 @@ public :
     
     //## statechart_method
     void motorOff_serializeStates(AOMSState* aomsState) const;
-    
-    //## statechart_method
-    void Regulateur_serializeStates(AOMSState* aomsState) const;
-    
-    //## statechart_method
-    void Minus_serializeStates(AOMSState* aomsState) const;
-    
-    //## statechart_method
-    void Major_serializeStates(AOMSState* aomsState) const;
-    
-    //## statechart_method
-    void consigne_serializeStates(AOMSState* aomsState) const;
 };
 //#]
 #endif // _OMINSTRUMENT
@@ -569,6 +597,30 @@ inline bool _SysVehicule::Accelerartion_IN() const {
     return state_9_subState == Accelerartion;
 }
 
+inline bool _SysVehicule::state_33_IN() const {
+    return state_0_IN();
+}
+
+inline bool _SysVehicule::regOn_IN() const {
+    return state_33_subState == regOn;
+}
+
+inline bool _SysVehicule::regOff_IN() const {
+    return state_33_subState == regOff;
+}
+
+inline bool _SysVehicule::regAccel_IN() const {
+    return state_33_subState == regAccel;
+}
+
+inline bool _SysVehicule::Minus_IN() const {
+    return state_33_subState == Minus;
+}
+
+inline bool _SysVehicule::Major_IN() const {
+    return state_33_subState == Major;
+}
+
 inline bool _SysVehicule::state_2_IN() const {
     return state_0_IN();
 }
@@ -587,22 +639,6 @@ inline bool _SysVehicule::motorOn_IN() const {
 
 inline bool _SysVehicule::motorOff_IN() const {
     return state_1_subState == motorOff;
-}
-
-inline bool _SysVehicule::Regulateur_IN() const {
-    return rootState_subState == Regulateur;
-}
-
-inline bool _SysVehicule::Minus_IN() const {
-    return Regulateur_subState == Minus;
-}
-
-inline bool _SysVehicule::Major_IN() const {
-    return Regulateur_subState == Major;
-}
-
-inline bool _SysVehicule::consigne_IN() const {
-    return Regulateur_subState == consigne;
 }
 
 #endif

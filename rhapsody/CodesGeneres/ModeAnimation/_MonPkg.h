@@ -4,7 +4,7 @@
 	Component	: CodesGeneres 
 	Configuration 	: ModeAnimation
 	Model Element	: _MonPkg
-//!	Generated Date	: Tue, 7, Oct 2025  
+//!	Generated Date	: Tue, 14, Oct 2025  
 	File Path	: CodesGeneres\ModeAnimation\_MonPkg.h
 *********************************************************************/
 
@@ -33,80 +33,22 @@
 class _SysVehicule;
 
 //#[ ignore
-#define regOff__MonPkg_id 13401
+#define setMinus__MonPkg_id 13401
 
-#define regOn__MonPkg_id 13402
+#define setMajor__MonPkg_id 13402
 
-#define setMinus__MonPkg_id 13403
+#define setMin__MonPkg_id 13403
 
-#define setMajor__MonPkg_id 13404
+#define setMaj__MonPkg_id 13404
 
-#define setMin__MonPkg_id 13405
+#define setMinLim__MonPkg_id 13405
 
-#define setMaj__MonPkg_id 13406
+#define setMajLim__MonPkg_id 13406
 //#]
 
 //## package _MonPkg
 
 
-
-//## event regOff()
-class regOff : public OMEvent {
-    ////    Friends    ////
-    
-public :
-
-#ifdef _OMINSTRUMENT
-    friend class OMAnimatedregOff;
-#endif // _OMINSTRUMENT
-
-    ////    Constructors and destructors    ////
-    
-    //## auto_generated
-    regOff();
-    
-    ////    Framework operations    ////
-    
-    //## statechart_method
-    virtual bool isTypeOf(const short id) const;
-};
-
-#ifdef _OMINSTRUMENT
-//#[ ignore
-class OMAnimatedregOff : virtual public AOMEvent {
-    DECLARE_META_EVENT(regOff)
-};
-//#]
-#endif // _OMINSTRUMENT
-
-//## event regOn()
-class regOn : public OMEvent {
-    ////    Friends    ////
-    
-public :
-
-#ifdef _OMINSTRUMENT
-    friend class OMAnimatedregOn;
-#endif // _OMINSTRUMENT
-
-    ////    Constructors and destructors    ////
-    
-    //## auto_generated
-    regOn();
-    
-    ////    Framework operations    ////
-    
-    //## statechart_method
-    virtual bool isTypeOf(const short id) const;
-};
-
-#ifdef _OMINSTRUMENT
-//#[ ignore
-class OMAnimatedregOn : virtual public AOMEvent {
-    DECLARE_META_EVENT(regOn)
-};
-//#]
-#endif // _OMINSTRUMENT
 
 //## event setMinus()
 class setMinus : public OMEvent {
@@ -220,6 +162,64 @@ public :
 //#[ ignore
 class OMAnimatedsetMaj : virtual public AOMEvent {
     DECLARE_META_EVENT(setMaj)
+};
+//#]
+#endif // _OMINSTRUMENT
+
+//## event setMinLim()
+class setMinLim : public OMEvent {
+    ////    Friends    ////
+    
+public :
+
+#ifdef _OMINSTRUMENT
+    friend class OMAnimatedsetMinLim;
+#endif // _OMINSTRUMENT
+
+    ////    Constructors and destructors    ////
+    
+    //## auto_generated
+    setMinLim();
+    
+    ////    Framework operations    ////
+    
+    //## statechart_method
+    virtual bool isTypeOf(const short id) const;
+};
+
+#ifdef _OMINSTRUMENT
+//#[ ignore
+class OMAnimatedsetMinLim : virtual public AOMEvent {
+    DECLARE_META_EVENT(setMinLim)
+};
+//#]
+#endif // _OMINSTRUMENT
+
+//## event setMajLim()
+class setMajLim : public OMEvent {
+    ////    Friends    ////
+    
+public :
+
+#ifdef _OMINSTRUMENT
+    friend class OMAnimatedsetMajLim;
+#endif // _OMINSTRUMENT
+
+    ////    Constructors and destructors    ////
+    
+    //## auto_generated
+    setMajLim();
+    
+    ////    Framework operations    ////
+    
+    //## statechart_method
+    virtual bool isTypeOf(const short id) const;
+};
+
+#ifdef _OMINSTRUMENT
+//#[ ignore
+class OMAnimatedsetMajLim : virtual public AOMEvent {
+    DECLARE_META_EVENT(setMajLim)
 };
 //#]
 #endif // _OMINSTRUMENT
