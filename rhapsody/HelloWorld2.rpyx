@@ -427,8 +427,8 @@
 			</IPropertyContainer>
 			</_properties>
 			<_name type="a">HelloWorld2</_name>
-			<_modifiedTimeWeak type="a">10.14.2025::6:21:41</_modifiedTimeWeak>
-			<_modifiedTime type="a">10.14.2025::9:29:45</_modifiedTime>
+			<_modifiedTimeWeak type="a">10.28.2025::12:39:17</_modifiedTimeWeak>
+			<_modifiedTime type="a">10.28.2025::12:41:2</_modifiedTime>
 			<_lastID type="a">4</_lastID>
 			<_UserColors type="w">
 				<IRPYRawContainer type="e">
@@ -872,8 +872,8 @@
 			</_properties>
 			<_name type="a">ClassDiagram</_name>
 			<_modifiedTimeWeak type="a">1.2.1990::0:0:0</_modifiedTimeWeak>
-			<_modifiedTime type="a">10.14.2025::7:19:55</_modifiedTime>
-			<_lastModifiedTime type="a">10.14.2025::7:19:55</_lastModifiedTime>
+			<_modifiedTime type="a">10.28.2025::12:41:38</_modifiedTime>
+			<_lastModifiedTime type="a">10.28.2025::12:41:38</_lastModifiedTime>
 			<m_hReferencedDiagram type="r">
 				<IHandle type="e">
 				</IHandle>
@@ -1101,7 +1101,7 @@
 				</CGIText>
 			</m_name>
 			<m_drawBehavior type="a">2152</m_drawBehavior>
-			<m_transform type="a">0.363551 0 0 0.606952 194 -63.5605 </m_transform>
+			<m_transform type="a">0.477514 0 0 1.77005 193.687 -549.978 </m_transform>
 			<m_bIsPreferencesInitialized type="a">1</m_bIsPreferencesInitialized>
 			<m_AdditionalLabel type="p">
 				<CGIText type="e">
@@ -1327,9 +1327,119 @@
 							<_hid type="a">GUID b24308fc-483a-492e-b12f-6afea7e98e43</_hid>
 						</IHandle>
 					
+					
+						<IHandle type="e">
+							<_hm2Class type="a">IAttribute</_hm2Class>
+							<_hsubsystem type="a">_MonPkg</_hsubsystem>
+							<_hclass type="a">_SysVehicule</_hclass>
+							<_hname type="a">lim</_hname>
+							<_hid type="a">GUID 505f6f3d-4c56-4ef8-93b2-081ec22aae3c</_hid>
+						</IHandle>
+					
+					
+						<IHandle type="e">
+							<_hm2Class type="a">IAttribute</_hm2Class>
+							<_hsubsystem type="a">_MonPkg</_hsubsystem>
+							<_hclass type="a">_SysVehicule</_hclass>
+							<_hname type="a">bluetooth</_hname>
+							<_hid type="a">GUID 35909356-8ea6-4c4d-a0d6-8a3d83a3301c</_hid>
+						</IHandle>
+					
+					
+						<IHandle type="e">
+							<_hm2Class type="a">IAttribute</_hm2Class>
+							<_hsubsystem type="a">_MonPkg</_hsubsystem>
+							<_hclass type="a">_SysVehicule</_hclass>
+							<_hname type="a">bluetoothCar</_hname>
+							<_hid type="a">GUID 97f8cb78-c3f7-4fe9-a5b4-5d6dcf3b9185</_hid>
+						</IHandle>
+					
+					
+						<IHandle type="e">
+							<_hm2Class type="a">IAttribute</_hm2Class>
+							<_hsubsystem type="a">_MonPkg</_hsubsystem>
+							<_hclass type="a">_SysVehicule</_hclass>
+							<_hname type="a">phoneUnlocked</_hname>
+							<_hid type="a">GUID 30d50896-7df9-4cfc-8abb-73169ace986e</_hid>
+						</IHandle>
+					
+					
+						<IHandle type="e">
+							<_hm2Class type="a">IAttribute</_hm2Class>
+							<_hsubsystem type="a">_MonPkg</_hsubsystem>
+							<_hclass type="a">_SysVehicule</_hclass>
+							<_hname type="a">code</_hname>
+							<_hid type="a">GUID d0f0073b-453c-47ae-8328-6e0e4c60784a</_hid>
+						</IHandle>
+					
+					
+						<IHandle type="e">
+							<_hm2Class type="a">IAttribute</_hm2Class>
+							<_hsubsystem type="a">_MonPkg</_hsubsystem>
+							<_hclass type="a">_SysVehicule</_hclass>
+							<_hname type="a">user</_hname>
+							<_hid type="a">GUID 7804c315-c4a4-4def-bc83-85c1e3271d6e</_hid>
+						</IHandle>
+					
+					
+						<IHandle type="e">
+							<_hm2Class type="a">IAttribute</_hm2Class>
+							<_hsubsystem type="a">_MonPkg</_hsubsystem>
+							<_hclass type="a">_SysVehicule</_hclass>
+							<_hname type="a">throttle2</_hname>
+							<_hid type="a">GUID fa2b2dfb-8f09-4286-a298-7a355b571394</_hid>
+						</IHandle>
+					
+					
+						<IHandle type="e">
+							<_hm2Class type="a">IAttribute</_hm2Class>
+							<_hsubsystem type="a">_MonPkg</_hsubsystem>
+							<_hclass type="a">_SysVehicule</_hclass>
+							<_hname type="a">accelPedal2</_hname>
+							<_hid type="a">GUID 287fbb06-519e-4b2a-a39d-c205c70993b3</_hid>
+						</IHandle>
+					
+					
+						<IHandle type="e">
+							<_hm2Class type="a">IAttribute</_hm2Class>
+							<_hsubsystem type="a">_MonPkg</_hsubsystem>
+							<_hclass type="a">_SysVehicule</_hclass>
+							<_hname type="a">brakePedal2</_hname>
+							<_hid type="a">GUID 483b90c9-e932-4605-bffb-ff34691000aa</_hid>
+						</IHandle>
+					
+					
+						<IHandle type="e">
+							<_hm2Class type="a">IAttribute</_hm2Class>
+							<_hsubsystem type="a">_MonPkg</_hsubsystem>
+							<_hclass type="a">_SysVehicule</_hclass>
+							<_hname type="a">speed2</_hname>
+							<_hid type="a">GUID 37e5840e-b89e-4fc4-b797-cf4ba85a33ea</_hid>
+						</IHandle>
+					
+					
+						<IHandle type="e">
+							<_hm2Class type="a">IAttribute</_hm2Class>
+							<_hsubsystem type="a">_MonPkg</_hsubsystem>
+							<_hclass type="a">_SysVehicule</_hclass>
+							<_hname type="a">secondVehicule</_hname>
+							<_hid type="a">GUID 4bf85f2a-1f7b-49ba-bfdd-1ef83517492c</_hid>
+						</IHandle>
+					
 				</IRPYRawContainer>
 			</Items>
-			<_itemValueOfFontPropertiesMapCount type="a">20</_itemValueOfFontPropertiesMapCount>
+			<_itemValueOfFontPropertiesMapCount type="a">31</_itemValueOfFontPropertiesMapCount>
+			<_fontPropValues type="a">Tahoma 8 400 0 0 0 0</_fontPropValues>
+			<_fontPropValues type="a">Tahoma 8 400 0 0 0 0</_fontPropValues>
+			<_fontPropValues type="a">Tahoma 8 400 0 0 0 0</_fontPropValues>
+			<_fontPropValues type="a">Tahoma 8 400 0 0 0 0</_fontPropValues>
+			<_fontPropValues type="a">Tahoma 8 400 0 0 0 0</_fontPropValues>
+			<_fontPropValues type="a">Tahoma 8 400 0 0 0 0</_fontPropValues>
+			<_fontPropValues type="a">Tahoma 8 400 0 0 0 0</_fontPropValues>
+			<_fontPropValues type="a">Tahoma 8 400 0 0 0 0</_fontPropValues>
+			<_fontPropValues type="a">Tahoma 8 400 0 0 0 0</_fontPropValues>
+			<_fontPropValues type="a">Tahoma 8 400 0 0 0 0</_fontPropValues>
+			<_fontPropValues type="a">Tahoma 8 400 0 0 0 0</_fontPropValues>
 			<_fontPropValues type="a">Tahoma 8 400 0 0 0 0</_fontPropValues>
 			<_fontPropValues type="a">Tahoma 8 400 0 0 0 0</_fontPropValues>
 			<_fontPropValues type="a">Tahoma 8 400 0 0 0 0</_fontPropValues>
@@ -1357,7 +1467,29 @@
 			<m_displayOption type="a">All</m_displayOption>
 			<m_bShowInherited type="a">0</m_bShowInherited>
 			<m_bOrdered type="a">0</m_bOrdered>
-			<_itemValueOfFontPropertiesMapCount type="a">13</_itemValueOfFontPropertiesMapCount>
+			<_itemValueOfFontPropertiesMapCount type="a">35</_itemValueOfFontPropertiesMapCount>
+			<_fontPropValues type="a">Tahoma 8 400 0 0 0 0</_fontPropValues>
+			<_fontPropValues type="a">Tahoma 8 400 0 0 0 0</_fontPropValues>
+			<_fontPropValues type="a">Tahoma 8 400 0 0 0 0</_fontPropValues>
+			<_fontPropValues type="a">Tahoma 8 400 0 0 0 0</_fontPropValues>
+			<_fontPropValues type="a">Tahoma 8 400 0 0 0 0</_fontPropValues>
+			<_fontPropValues type="a">Tahoma 8 400 0 0 0 0</_fontPropValues>
+			<_fontPropValues type="a">Tahoma 8 400 0 0 0 0</_fontPropValues>
+			<_fontPropValues type="a">Tahoma 8 400 0 0 0 0</_fontPropValues>
+			<_fontPropValues type="a">Tahoma 8 400 0 0 0 0</_fontPropValues>
+			<_fontPropValues type="a">Tahoma 8 400 0 0 0 0</_fontPropValues>
+			<_fontPropValues type="a">Tahoma 8 400 0 0 0 0</_fontPropValues>
+			<_fontPropValues type="a">Tahoma 8 400 0 0 0 0</_fontPropValues>
+			<_fontPropValues type="a">Tahoma 8 400 0 0 0 0</_fontPropValues>
+			<_fontPropValues type="a">Tahoma 8 400 0 0 0 0</_fontPropValues>
+			<_fontPropValues type="a">Tahoma 8 400 0 0 0 0</_fontPropValues>
+			<_fontPropValues type="a">Tahoma 8 400 0 0 0 0</_fontPropValues>
+			<_fontPropValues type="a">Tahoma 8 400 0 0 0 0</_fontPropValues>
+			<_fontPropValues type="a">Tahoma 8 400 0 0 0 0</_fontPropValues>
+			<_fontPropValues type="a">Tahoma 8 400 0 0 0 0</_fontPropValues>
+			<_fontPropValues type="a">Tahoma 8 400 0 0 0 0</_fontPropValues>
+			<_fontPropValues type="a">Tahoma 8 400 0 0 0 0</_fontPropValues>
+			<_fontPropValues type="a">Tahoma 8 400 0 0 0 0</_fontPropValues>
 			<_fontPropValues type="a">Tahoma 8 400 0 0 0 0</_fontPropValues>
 			<_fontPropValues type="a">Tahoma 8 400 0 0 0 0</_fontPropValues>
 			<_fontPropValues type="a">Tahoma 8 400 0 0 0 0</_fontPropValues>

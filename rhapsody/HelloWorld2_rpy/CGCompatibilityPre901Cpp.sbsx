@@ -10,6 +10,7 @@
 	<RHAPSODY-MODEL>
 	<IProfile type="e">
 			<_id type="a">GUID 1783458c-844d-40a6-853a-e7868821e695</_id>
+			<_myState type="a">8192</_myState>
 			<_properties type="p"><IPropertyContainer type="e">
 				<Subjects type="c">
 					<IRPYRawContainer type="e">

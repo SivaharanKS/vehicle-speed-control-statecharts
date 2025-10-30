@@ -2,14 +2,15 @@
 <RhapsodyArchive>
 	<MagicNumber></MagicNumber>
 	<CODE-PAGE>1252</CODE-PAGE>
-	<version>109.0</version>
+	<version>109.0.2</version>
 	<lang>*</lang>
-	<BuildNo>202002261110</BuildNo>
+	<BuildNo>202303101727</BuildNo>
 	<RMMMinimumClientVersion>100.0</RMMMinimumClientVersion>
 	
 	<RHAPSODY-MODEL>
 	<IProfile type="e">
 			<_id type="a">GUID 0a931094-5e7d-4d59-83e8-247a645b1176</_id>
+			<_myState type="a">8192</_myState>
 			<_properties type="p"><IPropertyContainer type="e">
 				<Subjects type="c">
 					<IRPYRawContainer type="e">

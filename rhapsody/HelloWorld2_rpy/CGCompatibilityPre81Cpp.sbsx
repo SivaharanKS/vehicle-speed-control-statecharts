@@ -2,27 +2,26 @@
 <RhapsodyArchive>
 	<MagicNumber></MagicNumber>
 	<CODE-PAGE>1252</CODE-PAGE>
-	<version>10.0</version>
+	<version>109.0.2</version>
 	<lang>C++</lang>
-	<BuildNo>9831308</BuildNo>
+	<BuildNo>202303101727</BuildNo>
+	<RMMMinimumClientVersion>100.0</RMMMinimumClientVersion>
 	
 	<RHAPSODY-MODEL>
 	<IProfile type="e">
 			<_id type="a">GUID dcd2cdb5-4c74-4d47-99ca-1b358b271e5f</_id>
+			<_myState type="a">8192</_myState>
 			<_properties type="p"><IPropertyContainer type="e">
 				<Subjects type="c">
 					<IRPYRawContainer type="e">
-						<size type="a">3</size>
 						<IPropertySubject type="e">
 							<_Name type="a">CPP_CG</_Name>
 							<Metaclasses type="c">
 								<IRPYRawContainer type="e">
-									<size type="a">3</size>
 									<IPropertyMetaclass type="e">
 										<_Name type="a">Class</_Name>
 										<Properties type="c">
 											<IRPYRawContainer type="e">
-												<size type="a">1</size>
 												<IProperty type="e">
 													<_Name type="a">GenerateClassDescriptionInSpecification</_Name>
 													<_Value type="a">True</_Value>
@@ -37,7 +36,6 @@
 										<_Name type="a">Configuration</_Name>
 										<Properties type="c">
 											<IRPYRawContainer type="e">
-												<size type="a">1</size>
 												<IProperty type="e">
 													<_Name type="a">UsePre81GlobalAttributeLocation</_Name>
 													<_Value type="a">True</_Value>
@@ -52,7 +50,6 @@
 										<_Name type="a">WriterTemplates</_Name>
 										<Properties type="c">
 											<IRPYRawContainer type="e">
-												<size type="a">2</size>
 												<IProperty type="e">
 													<_Name type="a">ClassImp</_Name>
 													<_Value type="a">[[$annotation%0D
@@ -89,12 +86,10 @@ $body]]%0D
 							<_Name type="a">CPP_ReverseEngineering</_Name>
 							<Metaclasses type="c">
 								<IRPYRawContainer type="e">
-									<size type="a">1</size>
 									<IPropertyMetaclass type="e">
 										<_Name type="a">ImplementationTrait</_Name>
 										<Properties type="c">
 											<IRPYRawContainer type="e">
-												<size type="a">2</size>
 												<IProperty type="e">
 													<_Name type="a">RoundtripArgumentTypeAsType</_Name>
 													<_Value type="a">False</_Value>
@@ -119,12 +114,10 @@ $body]]%0D
 							<_Name type="a">StatechartDiagram</_Name>
 							<Metaclasses type="c">
 								<IRPYRawContainer type="e">
-									<size type="a">1</size>
 									<IPropertyMetaclass type="e">
 										<_Name type="a">HistoryConnector</_Name>
 										<Properties type="c">
 											<IRPYRawContainer type="e">
-												<size type="a">1</size>
 												<IProperty type="e">
 													<_Name type="a">UseUMLNotation</_Name>
 													<_Value type="a">False</_Value>
@@ -146,10 +139,11 @@ $body]]%0D
 			<_name type="a">CGCompatibilityPre81Cpp</_name>
 			<Stereotypes type="c">
 				<IRPYRawContainer type="e">
-					<size type="a">1</size>
 					
 						<IHandle type="e">
 							<_hm2Class type="a">IStereotype</_hm2Class>
+							<_hsubsystem type="a">PredefinedTypes</_hsubsystem>
+							<_hname type="a">Settings</_hname>
 							<_hid type="a">GUID c4916b7f-5ca2-41a3-b8a9-6ac22b145b51</_hid>
 						</IHandle>
 					
@@ -184,7 +178,6 @@ $body]]%0D
 	</RHAPSODY-MODEL>
 	<OslcLinks type="c">
 		<IRPYRawContainer type="e">
-			<size type="a">0</size>
 		</IRPYRawContainer>
 	</OslcLinks>
 
