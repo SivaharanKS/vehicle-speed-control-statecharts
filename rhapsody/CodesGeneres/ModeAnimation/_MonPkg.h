@@ -4,7 +4,7 @@
 	Component	: CodesGeneres 
 	Configuration 	: ModeAnimation
 	Model Element	: _MonPkg
-//!	Generated Date	: Mon, 27, Oct 2025  
+//!	Generated Date	: Fri, 14, Nov 2025  
 	File Path	: CodesGeneres\ModeAnimation\_MonPkg.h
 *********************************************************************/
 
@@ -78,6 +78,10 @@ class _SysVehicule;
 #define evCallingAccept__MonPkg_id 13422
 
 #define evCallingDeny__MonPkg_id 13423
+
+#define evSMS__MonPkg_id 13424
+
+#define evRead__MonPkg_id 13425
 //#]
 
 //## package _MonPkg
@@ -747,6 +751,64 @@ public :
 //#[ ignore
 class OMAnimatedevCallingDeny : virtual public AOMEvent {
     DECLARE_META_EVENT(evCallingDeny)
+};
+//#]
+#endif // _OMINSTRUMENT
+
+//## event evSMS()
+class evSMS : public OMEvent {
+    ////    Friends    ////
+    
+public :
+
+#ifdef _OMINSTRUMENT
+    friend class OMAnimatedevSMS;
+#endif // _OMINSTRUMENT
+
+    ////    Constructors and destructors    ////
+    
+    //## auto_generated
+    evSMS();
+    
+    ////    Framework operations    ////
+    
+    //## statechart_method
+    virtual bool isTypeOf(const short id) const;
+};
+
+#ifdef _OMINSTRUMENT
+//#[ ignore
+class OMAnimatedevSMS : virtual public AOMEvent {
+    DECLARE_META_EVENT(evSMS)
+};
+//#]
+#endif // _OMINSTRUMENT
+
+//## event evRead()
+class evRead : public OMEvent {
+    ////    Friends    ////
+    
+public :
+
+#ifdef _OMINSTRUMENT
+    friend class OMAnimatedevRead;
+#endif // _OMINSTRUMENT
+
+    ////    Constructors and destructors    ////
+    
+    //## auto_generated
+    evRead();
+    
+    ////    Framework operations    ////
+    
+    //## statechart_method
+    virtual bool isTypeOf(const short id) const;
+};
+
+#ifdef _OMINSTRUMENT
+//#[ ignore
+class OMAnimatedevRead : virtual public AOMEvent {
+    DECLARE_META_EVENT(evRead)
 };
 //#]
 #endif // _OMINSTRUMENT

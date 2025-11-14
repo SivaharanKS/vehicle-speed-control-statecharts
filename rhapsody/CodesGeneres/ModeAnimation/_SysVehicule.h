@@ -4,7 +4,7 @@
 	Component	: CodesGeneres 
 	Configuration 	: ModeAnimation
 	Model Element	: _SysVehicule
-//!	Generated Date	: Tue, 28, Oct 2025  
+//!	Generated Date	: Fri, 14, Nov 2025  
 	File Path	: CodesGeneres\ModeAnimation\_SysVehicule.h
 *********************************************************************/
 
@@ -59,6 +59,8 @@
 #define OMAnim__MonPkg__SysVehicule_setReg_bool_ARGS_DECLARATION bool p_reg;
 
 #define OMAnim__MonPkg__SysVehicule_setSecondVehicule_bool_ARGS_DECLARATION bool p_secondVehicule;
+
+#define OMAnim__MonPkg__SysVehicule_setSms_int_ARGS_DECLARATION int p_sms;
 
 #define OMAnim__MonPkg__SysVehicule_setThrottle_double_ARGS_DECLARATION double p_throttle;
 
@@ -268,9 +270,6 @@ public :
     //## operation regulateur()
     void regulateur();
     
-    //## operation regulateurAdaptatif()
-    void regulateurAdaptatif();
-    
     //## operation setMajor()
     void setMajor();
     
@@ -279,12 +278,6 @@ public :
     
     //## operation testCode()
     void testCode();
-    
-    //## auto_generated
-    double getDistanceEntreVoiture();
-    
-    //## auto_generated
-    void setDistanceEntreVoiture(double p_DistanceEntreVoiture);
     
     //## auto_generated
     double getAccelPedal2();
@@ -315,12 +308,6 @@ public :
     
     //## auto_generated
     void setCode(int p_code);
-    
-    //## auto_generated
-    int getDistance2();
-    
-    //## auto_generated
-    void setDistance2(int p_distance2);
     
     //## auto_generated
     bool getFlag();
@@ -368,6 +355,12 @@ public :
     void setSecondVehicule(bool p_secondVehicule);
     
     //## auto_generated
+    int getSms();
+    
+    //## auto_generated
+    void setSms(int p_sms);
+    
+    //## auto_generated
     int getSound();
     
     //## auto_generated
@@ -411,8 +404,6 @@ protected :
     //## auto_generated
     bool cancelTimeout(const IOxfTimeout* arg);
     
-    double DistanceEntreVoiture;		//## attribute DistanceEntreVoiture
-    
     double accelPedal2;		//## attribute accelPedal2
     
     bool bluetooth;		//## attribute bluetooth
@@ -422,8 +413,6 @@ protected :
     double brakePedal2;		//## attribute brakePedal2
     
     int code;		//## attribute code
-    
-    int distance2;		//## attribute distance2
     
     bool flag;		//## attribute flag
     
@@ -438,6 +427,8 @@ protected :
     bool reg;		//## attribute reg
     
     bool secondVehicule;		//## attribute secondVehicule
+    
+    int sms;		//## attribute sms
     
     int sound;		//## attribute sound
     
@@ -507,6 +498,27 @@ public :
     //## statechart_method
     IOxfReactive::TakeEventStatus Accelerartion_handleEvent();
     
+    // state_89:
+    //## statechart_method
+    inline bool state_89_IN() const;
+    
+    //## statechart_method
+    void state_89_entDef();
+    
+    //## statechart_method
+    IOxfReactive::TakeEventStatus state_89_processEvent();
+    
+    // SmsNotReadyToShow:
+    //## statechart_method
+    inline bool SmsNotReadyToShow_IN() const;
+    
+    // SMS:
+    //## statechart_method
+    inline bool SMS_IN() const;
+    
+    //## statechart_method
+    IOxfReactive::TakeEventStatus SMS_handleEvent();
+    
     // state_80:
     //## statechart_method
     inline bool state_80_IN() const;
@@ -528,9 +540,19 @@ public :
     //## statechart_method
     inline bool song2_IN() const;
     
-    // Song1:
     //## statechart_method
-    inline bool Song1_IN() const;
+    IOxfReactive::TakeEventStatus song2TakeNull();
+    
+    //## statechart_method
+    IOxfReactive::TakeEventStatus song2_handleEvent();
+    
+    // song1_2:
+    //## statechart_method
+    inline bool song1_2_IN() const;
+    
+    // song1:
+    //## statechart_method
+    inline bool song1_IN() const;
     
     // musicoff:
     //## statechart_method
@@ -659,6 +681,10 @@ public :
     //## statechart_method
     IOxfReactive::TakeEventStatus state_57_processEvent();
     
+    // Phone2Ready:
+    //## statechart_method
+    inline bool Phone2Ready_IN() const;
+    
     // phone2Initial:
     //## statechart_method
     inline bool phone2Initial_IN() const;
@@ -667,9 +693,12 @@ public :
     //## statechart_method
     inline bool phone2Calling_IN() const;
     
-    // callingDeny:
     //## statechart_method
-    inline bool callingDeny_IN() const;
+    IOxfReactive::TakeEventStatus phone2Calling_handleEvent();
+    
+    // CallingDeny:
+    //## statechart_method
+    inline bool CallingDeny_IN() const;
     
     // callingAccept:
     //## statechart_method
@@ -741,15 +770,28 @@ public :
     void state_47_entDef();
     
     //## statechart_method
+    void state_47_exit();
+    
+    //## statechart_method
     IOxfReactive::TakeEventStatus state_47_processEvent();
     
     // limWaiting:
     //## statechart_method
     inline bool limWaiting_IN() const;
     
+    //## statechart_method
+    IOxfReactive::TakeEventStatus limWaiting_handleEvent();
+    
     // limOn:
     //## statechart_method
     inline bool limOn_IN() const;
+    
+    //## statechart_method
+    IOxfReactive::TakeEventStatus limOn_handleEvent();
+    
+    // limOffInatendu:
+    //## statechart_method
+    inline bool limOffInatendu_IN() const;
     
     // limOff:
     //## statechart_method
@@ -786,9 +828,6 @@ public :
     // regAccel:
     //## statechart_method
     inline bool regAccel_IN() const;
-    
-    //## statechart_method
-    IOxfReactive::TakeEventStatus regAccel_handleEvent();
     
     // state_2:
     //## statechart_method
@@ -836,57 +875,63 @@ protected :
         Neutre = 4,
         Freint = 5,
         Accelerartion = 6,
-        state_80 = 7,
-        song3 = 8,
-        song2 = 9,
-        Song1 = 10,
-        musicoff = 11,
-        state_77 = 12,
-        safeSpeed = 13,
-        dangerBrake = 14,
-        state_73 = 15,
-        vehiculePresent = 16,
-        vehiculeABS = 17,
-        state_68 = 18,
-        Neutre2 = 19,
-        Freint2 = 20,
-        Accelerartion2 = 21,
-        state_67 = 22,
-        Calcul_Vitesse_Distance2 = 23,
-        state_58 = 24,
-        unlockedPhone = 25,
-        phoneCode = 26,
-        bluetoothWaiting = 27,
-        state_58_bluetoothOn = 28,
-        state_57 = 29,
-        phone2Initial = 30,
-        phone2Calling = 31,
-        callingDeny = 32,
-        callingAccept = 33,
-        state_54 = 34,
-        bluetoothOn = 35,
-        bluetoothOff = 36,
-        state_51 = 37,
-        setoff = 38,
-        NeutreSet = 39,
-        minusPlus = 40,
-        Minus = 41,
-        MajorPlus = 42,
-        Major = 43,
-        state_47 = 44,
-        limWaiting = 45,
-        limOn = 46,
-        limOff = 47,
-        state_33 = 48,
-        regOn = 49,
-        regOff = 50,
-        regAdaptatif = 51,
-        regAccel = 52,
-        state_2 = 53,
-        Calcul_Vitesse_Distance = 54,
-        state_1 = 55,
-        motorOn = 56,
-        motorOff = 57
+        state_89 = 7,
+        SmsNotReadyToShow = 8,
+        SMS = 9,
+        state_80 = 10,
+        song3 = 11,
+        song2 = 12,
+        song1_2 = 13,
+        song1 = 14,
+        musicoff = 15,
+        state_77 = 16,
+        safeSpeed = 17,
+        dangerBrake = 18,
+        state_73 = 19,
+        vehiculePresent = 20,
+        vehiculeABS = 21,
+        state_68 = 22,
+        Neutre2 = 23,
+        Freint2 = 24,
+        Accelerartion2 = 25,
+        state_67 = 26,
+        Calcul_Vitesse_Distance2 = 27,
+        state_58 = 28,
+        unlockedPhone = 29,
+        phoneCode = 30,
+        bluetoothWaiting = 31,
+        state_58_bluetoothOn = 32,
+        state_57 = 33,
+        Phone2Ready = 34,
+        phone2Initial = 35,
+        phone2Calling = 36,
+        CallingDeny = 37,
+        callingAccept = 38,
+        state_54 = 39,
+        bluetoothOn = 40,
+        bluetoothOff = 41,
+        state_51 = 42,
+        setoff = 43,
+        NeutreSet = 44,
+        minusPlus = 45,
+        Minus = 46,
+        MajorPlus = 47,
+        Major = 48,
+        state_47 = 49,
+        limWaiting = 50,
+        limOn = 51,
+        limOffInatendu = 52,
+        limOff = 53,
+        state_33 = 54,
+        regOn = 55,
+        regOff = 56,
+        regAdaptatif = 57,
+        regAccel = 58,
+        state_2 = 59,
+        Calcul_Vitesse_Distance = 60,
+        state_1 = 61,
+        motorOn = 62,
+        motorOff = 63
     };
     
     int rootState_subState;
@@ -899,9 +944,15 @@ protected :
     
     IOxfTimeout* state_9_timeout;
     
+    int state_89_subState;
+    
+    int state_89_active;
+    
     int state_80_subState;
     
     int state_80_active;
+    
+    IOxfTimeout* state_80_timeout;
     
     int state_77_subState;
     
@@ -992,6 +1043,8 @@ DECLARE_OPERATION_CLASS(_MonPkg__SysVehicule_setReg_bool)
 
 DECLARE_OPERATION_CLASS(_MonPkg__SysVehicule_setSecondVehicule_bool)
 
+DECLARE_OPERATION_CLASS(_MonPkg__SysVehicule_setSms_int)
+
 DECLARE_OPERATION_CLASS(_MonPkg__SysVehicule_setThrottle_double)
 
 DECLARE_OPERATION_CLASS(_MonPkg__SysVehicule_setThrottle2_double)
@@ -1021,6 +1074,8 @@ class OMAnimated_SysVehicule : virtual public AOMInstance {
     DECLARE_META_OP(_MonPkg__SysVehicule_setReg_bool)
     
     DECLARE_META_OP(_MonPkg__SysVehicule_setSecondVehicule_bool)
+    
+    DECLARE_META_OP(_MonPkg__SysVehicule_setSms_int)
     
     DECLARE_META_OP(_MonPkg__SysVehicule_setThrottle_double)
     
@@ -1056,6 +1111,15 @@ public :
     void Accelerartion_serializeStates(AOMSState* aomsState) const;
     
     //## statechart_method
+    void state_89_serializeStates(AOMSState* aomsState) const;
+    
+    //## statechart_method
+    void SmsNotReadyToShow_serializeStates(AOMSState* aomsState) const;
+    
+    //## statechart_method
+    void SMS_serializeStates(AOMSState* aomsState) const;
+    
+    //## statechart_method
     void state_80_serializeStates(AOMSState* aomsState) const;
     
     //## statechart_method
@@ -1065,7 +1129,10 @@ public :
     void song2_serializeStates(AOMSState* aomsState) const;
     
     //## statechart_method
-    void Song1_serializeStates(AOMSState* aomsState) const;
+    void song1_2_serializeStates(AOMSState* aomsState) const;
+    
+    //## statechart_method
+    void song1_serializeStates(AOMSState* aomsState) const;
     
     //## statechart_method
     void musicoff_serializeStates(AOMSState* aomsState) const;
@@ -1125,13 +1192,16 @@ public :
     void state_57_serializeStates(AOMSState* aomsState) const;
     
     //## statechart_method
+    void Phone2Ready_serializeStates(AOMSState* aomsState) const;
+    
+    //## statechart_method
     void phone2Initial_serializeStates(AOMSState* aomsState) const;
     
     //## statechart_method
     void phone2Calling_serializeStates(AOMSState* aomsState) const;
     
     //## statechart_method
-    void callingDeny_serializeStates(AOMSState* aomsState) const;
+    void CallingDeny_serializeStates(AOMSState* aomsState) const;
     
     //## statechart_method
     void callingAccept_serializeStates(AOMSState* aomsState) const;
@@ -1174,6 +1244,9 @@ public :
     
     //## statechart_method
     void limOn_serializeStates(AOMSState* aomsState) const;
+    
+    //## statechart_method
+    void limOffInatendu_serializeStates(AOMSState* aomsState) const;
     
     //## statechart_method
     void limOff_serializeStates(AOMSState* aomsState) const;
@@ -1239,6 +1312,18 @@ inline bool _SysVehicule::Accelerartion_IN() const {
     return state_9_subState == Accelerartion;
 }
 
+inline bool _SysVehicule::state_89_IN() const {
+    return state_0_IN();
+}
+
+inline bool _SysVehicule::SmsNotReadyToShow_IN() const {
+    return state_89_subState == SmsNotReadyToShow;
+}
+
+inline bool _SysVehicule::SMS_IN() const {
+    return state_89_subState == SMS;
+}
+
 inline bool _SysVehicule::state_80_IN() const {
     return state_0_IN();
 }
@@ -1251,8 +1336,12 @@ inline bool _SysVehicule::song2_IN() const {
     return state_80_subState == song2;
 }
 
-inline bool _SysVehicule::Song1_IN() const {
-    return state_80_subState == Song1;
+inline bool _SysVehicule::song1_2_IN() const {
+    return state_80_subState == song1_2;
+}
+
+inline bool _SysVehicule::song1_IN() const {
+    return state_80_subState == song1;
 }
 
 inline bool _SysVehicule::musicoff_IN() const {
@@ -1331,6 +1420,10 @@ inline bool _SysVehicule::state_57_IN() const {
     return state_0_IN();
 }
 
+inline bool _SysVehicule::Phone2Ready_IN() const {
+    return state_57_subState == Phone2Ready;
+}
+
 inline bool _SysVehicule::phone2Initial_IN() const {
     return state_57_subState == phone2Initial;
 }
@@ -1339,8 +1432,8 @@ inline bool _SysVehicule::phone2Calling_IN() const {
     return state_57_subState == phone2Calling;
 }
 
-inline bool _SysVehicule::callingDeny_IN() const {
-    return state_57_subState == callingDeny;
+inline bool _SysVehicule::CallingDeny_IN() const {
+    return state_57_subState == CallingDeny;
 }
 
 inline bool _SysVehicule::callingAccept_IN() const {
@@ -1397,6 +1490,10 @@ inline bool _SysVehicule::limWaiting_IN() const {
 
 inline bool _SysVehicule::limOn_IN() const {
     return state_47_subState == limOn;
+}
+
+inline bool _SysVehicule::limOffInatendu_IN() const {
+    return state_47_subState == limOffInatendu;
 }
 
 inline bool _SysVehicule::limOff_IN() const {

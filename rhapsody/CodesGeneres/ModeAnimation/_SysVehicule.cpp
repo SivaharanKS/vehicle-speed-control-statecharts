@@ -4,7 +4,7 @@
 	Component	: CodesGeneres 
 	Configuration 	: ModeAnimation
 	Model Element	: _SysVehicule
-//!	Generated Date	: Thu, 30, Oct 2025  
+//!	Generated Date	: Fri, 14, Nov 2025  
 	File Path	: CodesGeneres\ModeAnimation\_SysVehicule.cpp
 *********************************************************************/
 
@@ -42,8 +42,6 @@
 #define _MonPkg__SysVehicule_music_SERIALIZE OM_NO_OP
 
 #define _MonPkg__SysVehicule_regulateur_SERIALIZE OM_NO_OP
-
-#define _MonPkg__SysVehicule_regulateurAdaptatif_SERIALIZE OM_NO_OP
 
 #define _MonPkg__SysVehicule_setMajor_SERIALIZE OM_NO_OP
 
@@ -90,6 +88,10 @@
 #define OMAnim__MonPkg__SysVehicule_setSecondVehicule_bool_UNSERIALIZE_ARGS OP_UNSER(OMDestructiveString2X,p_secondVehicule)
 
 #define OMAnim__MonPkg__SysVehicule_setSecondVehicule_bool_SERIALIZE_RET_VAL
+
+#define OMAnim__MonPkg__SysVehicule_setSms_int_UNSERIALIZE_ARGS OP_UNSER(OMDestructiveString2X,p_sms)
+
+#define OMAnim__MonPkg__SysVehicule_setSms_int_SERIALIZE_RET_VAL
 
 #define OMAnim__MonPkg__SysVehicule_setThrottle_double_UNSERIALIZE_ARGS OP_UNSER(OMDestructiveString2X,p_throttle)
 
@@ -185,7 +187,7 @@ void _SysVehicule::init() {
     //#]
 }
 
-_SysVehicule::_SysVehicule(IOxfActive* theActiveContext) : DistanceEntreVoiture(0), MAX_BRAKE(10), MAX_SPEED(120), MAX_THROTTLE(10.0), _simu(true), accelPedal(0.0), accelPedal2(0.0), airResistance(0.0), alpha(0), bluetooth(false), bluetoothCar(false), brakePedal(0.0), brakePedal2(0.0), code(0), distance(0), distance2(distance), error(0.0), fdist(0.0), flag(false), fspeed(0.0), fspeed2(0.0), ignition(false), key(false), lim(false), phoneUnlocked(false), reg(false), secondVehicule(false), sound(0), speed(0), speed2(0), steady(0.0), throttle(0.0), throttle2(0.0), user(0), vitesseConsigne(0.0) {
+_SysVehicule::_SysVehicule(IOxfActive* theActiveContext) : MAX_BRAKE(10), MAX_SPEED(120), MAX_THROTTLE(10.0), _simu(true), accelPedal(0.0), accelPedal2(0.0), airResistance(0.0), alpha(0), bluetooth(false), bluetoothCar(false), brakePedal(0.0), brakePedal2(0.0), code(0), distance(0), error(0.0), fdist(0.0), flag(false), fspeed(0.0), fspeed2(0.0), ignition(false), key(false), lim(false), phoneUnlocked(false), reg(false), secondVehicule(false), sms(0), sound(0), speed(0), speed2(0), steady(0.0), throttle(0.0), throttle2(0.0), user(0), vitesseConsigne(0.0) {
     NOTIFY_ACTIVE_CONSTRUCTOR(_SysVehicule, _SysVehicule(), 0, _MonPkg__SysVehicule__SysVehicule_SERIALIZE);
     setActiveContext(this, true);
     initStatechart();
@@ -339,13 +341,12 @@ void _SysVehicule::CalculVitesse2(double throttle) {
     if(fspeed2>MAX_SPEED) fspeed2=MAX_SPEED;
     if(fspeed2<0) fspeed2=0;
     
-    fdist=fdist+(fspeed/36.0)/5.0;
-    
     speed2=(int)fspeed2;
     
-    distance2=(int)fdist;
-    
     if(throttle2>0.0) throttle2-=(0.5/10.0);  
+    
+    
+    
     //#]
 }
 
@@ -391,11 +392,11 @@ void _SysVehicule::music() {
     //#[ operation music()
     if(sound == 0){
     	PlaySound(NULL, 0, 0);
-    }else if(sound ==1){
+    }else if (sound ==1){
     	PlaySound(TEXT("alarm.wav"), NULL, SND_LOOP | SND_ASYNC);
-    }else if(sound ==2){
+    }else if (sound ==2){
     	PlaySound(TEXT("call.wav"), NULL, SND_LOOP | SND_ASYNC);
-    }else if(sound ==3){
+    }else if (sound ==3){
     	PlaySound(TEXT("speak.wav"), NULL, SND_LOOP | SND_ASYNC);
     }
     //#]
@@ -407,53 +408,6 @@ void _SysVehicule::regulateur() {
     error  = (double) (5*(vitesseConsigne - speed) / 6.0);
     steady = (double) (vitesseConsigne / 12.0);
     throttle = steady+error;
-    //#]
-}
-
-void _SysVehicule::regulateurAdaptatif() {
-    NOTIFY_OPERATION(regulateurAdaptatif, regulateurAdaptatif(), 0, _MonPkg__SysVehicule_regulateurAdaptatif_SERIALIZE);
-    //#[ operation regulateurAdaptatif()
-    
-    double min_gap = 10.0;           
-    double dt = 0.5;                 
-    double Kp = 0.5;                 
-    double Kd = 0.3;                
-    double target_speed = vitesseConsigne;
-    
-    
-    double Vb = speed;             
-    double Va = speed2; 
-    double v_set = vitesseConsigne;
-    
-    
-    if (Va > MAX_SPEED) Va = MAX_SPEED;
-    if (Va < 0) Va = 0;
-    if (Vb < 0) Vb = 0;
-    
-    
-    double Vb_ms = Vb / 3.6;
-    double Va_ms = Va / 3.6;
-    
-    DistanceEntreVoiture += (Va_ms - Vb_ms) * dt;
-    
-    
-    double erreur_distance = DistanceEntreVoiture - min_gap;
-    
-    
-    double correction = Kp * erreur_distance + Kd * (Va_ms - Vb_ms);
-    
-    
-    double v_set_ms = Vb_ms + correction;
-    
-    
-    v_set = v_set_ms * 3.6;
-    
-    
-    if (v_set > target_speed) v_set = target_speed;
-    if (v_set < 0) v_set = 0;
-    
-    
-    vitesseConsigne = v_set;
     //#]
 }
 
@@ -476,15 +430,6 @@ void _SysVehicule::testCode() {
     	code = 0;
     }
     //#]
-}
-
-double _SysVehicule::getDistanceEntreVoiture() {
-    return DistanceEntreVoiture;
-}
-
-void _SysVehicule::setDistanceEntreVoiture(double p_DistanceEntreVoiture) {
-    DistanceEntreVoiture = p_DistanceEntreVoiture;
-    NOTIFY_SET_OPERATION;
 }
 
 double _SysVehicule::getAccelPedal2() {
@@ -529,14 +474,6 @@ int _SysVehicule::getCode() {
 void _SysVehicule::setCode(int p_code) {
     code = p_code;
     NOTIFY_SET_OPERATION;
-}
-
-int _SysVehicule::getDistance2() {
-    return distance2;
-}
-
-void _SysVehicule::setDistance2(int p_distance2) {
-    distance2 = p_distance2;
 }
 
 bool _SysVehicule::getFlag() {
@@ -604,6 +541,15 @@ void _SysVehicule::setSecondVehicule(bool p_secondVehicule) {
     NOTIFY_SET_OPERATION;
 }
 
+int _SysVehicule::getSms() {
+    return sms;
+}
+
+void _SysVehicule::setSms(int p_sms) {
+    sms = p_sms;
+    NOTIFY_SET_OPERATION;
+}
+
 int _SysVehicule::getSound() {
     return sound;
 }
@@ -660,8 +606,11 @@ void _SysVehicule::initStatechart() {
     state_9_subState = OMNonState;
     state_9_active = OMNonState;
     state_9_timeout = NULL;
+    state_89_subState = OMNonState;
+    state_89_active = OMNonState;
     state_80_subState = OMNonState;
     state_80_active = OMNonState;
+    state_80_timeout = NULL;
     state_77_subState = OMNonState;
     state_77_active = OMNonState;
     state_73_subState = OMNonState;
@@ -699,6 +648,7 @@ void _SysVehicule::initStatechart() {
 
 void _SysVehicule::cancelTimeouts() {
     cancel(state_9_timeout);
+    cancel(state_80_timeout);
     cancel(state_73_timeout);
     cancel(state_68_timeout);
     cancel(state_67_timeout);
@@ -715,6 +665,11 @@ bool _SysVehicule::cancelTimeout(const IOxfTimeout* arg) {
     if(state_9_timeout == arg)
         {
             state_9_timeout = NULL;
+            res = true;
+        }
+    if(state_80_timeout == arg)
+        {
+            state_80_timeout = NULL;
             res = true;
         }
     if(state_73_timeout == arg)
@@ -840,6 +795,7 @@ void _SysVehicule::state_0_entDef() {
     state_73_entDef();
     state_77_entDef();
     state_80_entDef();
+    state_89_entDef();
 }
 
 void _SysVehicule::state_0_exit() {
@@ -899,36 +855,7 @@ void _SysVehicule::state_0_exit() {
     state_9_subState = OMNonState;
     NOTIFY_STATE_EXITED("ROOT.state_0.state_9");
     state_33_exit();
-    switch (state_47_subState) {
-        // State limOff
-        case limOff:
-        {
-            popNullTransition();
-            cancel(state_47_timeout);
-            NOTIFY_STATE_EXITED("ROOT.state_0.state_47.limOff");
-        }
-        break;
-        // State limWaiting
-        case limWaiting:
-        {
-            popNullTransition();
-            cancel(state_47_timeout);
-            NOTIFY_STATE_EXITED("ROOT.state_0.state_47.limWaiting");
-        }
-        break;
-        // State limOn
-        case limOn:
-        {
-            popNullTransition();
-            cancel(state_47_timeout);
-            NOTIFY_STATE_EXITED("ROOT.state_0.state_47.limOn");
-        }
-        break;
-        default:
-            break;
-    }
-    state_47_subState = OMNonState;
-    NOTIFY_STATE_EXITED("ROOT.state_0.state_47");
+    state_47_exit();
     state_51_exit();
     switch (state_54_subState) {
         // State bluetoothOff
@@ -1024,6 +951,26 @@ void _SysVehicule::state_0_exit() {
     state_77_subState = OMNonState;
     NOTIFY_STATE_EXITED("ROOT.state_0.state_77");
     state_80_exit();
+    switch (state_89_subState) {
+        // State SMS
+        case SMS:
+        {
+            popNullTransition();
+            NOTIFY_STATE_EXITED("ROOT.state_0.state_89.SMS");
+        }
+        break;
+        // State SmsNotReadyToShow
+        case SmsNotReadyToShow:
+        {
+            popNullTransition();
+            NOTIFY_STATE_EXITED("ROOT.state_0.state_89.SmsNotReadyToShow");
+        }
+        break;
+        default:
+            break;
+    }
+    state_89_subState = OMNonState;
+    NOTIFY_STATE_EXITED("ROOT.state_0.state_89");
     
     NOTIFY_STATE_EXITED("ROOT.state_0");
 }
@@ -1149,6 +1096,15 @@ IOxfReactive::TakeEventStatus _SysVehicule::state_0_processEvent() {
         }
     // State state_80
     if(state_80_processEvent() != eventNotConsumed)
+        {
+            res = eventConsumed;
+            if(!IS_IN(state_0))
+                {
+                    return res;
+                }
+        }
+    // State state_89
+    if(state_89_processEvent() != eventNotConsumed)
         {
             res = eventConsumed;
             if(!IS_IN(state_0))
@@ -1345,9 +1301,110 @@ IOxfReactive::TakeEventStatus _SysVehicule::Accelerartion_handleEvent() {
     return res;
 }
 
+void _SysVehicule::state_89_entDef() {
+    NOTIFY_STATE_ENTERED("ROOT.state_0.state_89");
+    NOTIFY_TRANSITION_STARTED("112");
+    NOTIFY_STATE_ENTERED("ROOT.state_0.state_89.SmsNotReadyToShow");
+    pushNullTransition();
+    state_89_subState = SmsNotReadyToShow;
+    state_89_active = SmsNotReadyToShow;
+    NOTIFY_TRANSITION_TERMINATED("112");
+}
+
+IOxfReactive::TakeEventStatus _SysVehicule::state_89_processEvent() {
+    IOxfReactive::TakeEventStatus res = eventNotConsumed;
+    switch (state_89_active) {
+        // State SMS
+        case SMS:
+        {
+            res = SMS_handleEvent();
+        }
+        break;
+        // State SmsNotReadyToShow
+        case SmsNotReadyToShow:
+        {
+            if(IS_EVENT_TYPE_OF(OMNullEventId))
+                {
+                    //## transition 113 
+                    if(IS_IN(unlockedPhone))
+                        {
+                            NOTIFY_TRANSITION_STARTED("113");
+                            popNullTransition();
+                            NOTIFY_STATE_EXITED("ROOT.state_0.state_89.SmsNotReadyToShow");
+                            NOTIFY_STATE_ENTERED("ROOT.state_0.state_89.SMS");
+                            pushNullTransition();
+                            state_89_subState = SMS;
+                            state_89_active = SMS;
+                            NOTIFY_TRANSITION_TERMINATED("113");
+                            res = eventConsumed;
+                        }
+                }
+            
+            
+        }
+        break;
+        default:
+            break;
+    }
+    return res;
+}
+
+IOxfReactive::TakeEventStatus _SysVehicule::SMS_handleEvent() {
+    IOxfReactive::TakeEventStatus res = eventNotConsumed;
+    if(IS_EVENT_TYPE_OF(evSMS__MonPkg_id))
+        {
+            NOTIFY_TRANSITION_STARTED("110");
+            popNullTransition();
+            NOTIFY_STATE_EXITED("ROOT.state_0.state_89.SMS");
+            //#[ transition 110 
+            sms = sms + 1;
+            //#]
+            NOTIFY_STATE_ENTERED("ROOT.state_0.state_89.SMS");
+            pushNullTransition();
+            state_89_subState = SMS;
+            state_89_active = SMS;
+            NOTIFY_TRANSITION_TERMINATED("110");
+            res = eventConsumed;
+        }
+    else if(IS_EVENT_TYPE_OF(OMNullEventId))
+        {
+            //## transition 114 
+            if(IS_IN(bluetoothWaiting))
+                {
+                    NOTIFY_TRANSITION_STARTED("114");
+                    popNullTransition();
+                    NOTIFY_STATE_EXITED("ROOT.state_0.state_89.SMS");
+                    NOTIFY_STATE_ENTERED("ROOT.state_0.state_89.SmsNotReadyToShow");
+                    pushNullTransition();
+                    state_89_subState = SmsNotReadyToShow;
+                    state_89_active = SmsNotReadyToShow;
+                    NOTIFY_TRANSITION_TERMINATED("114");
+                    res = eventConsumed;
+                }
+        }
+    else if(IS_EVENT_TYPE_OF(evRead__MonPkg_id))
+        {
+            NOTIFY_TRANSITION_STARTED("111");
+            popNullTransition();
+            NOTIFY_STATE_EXITED("ROOT.state_0.state_89.SMS");
+            //#[ transition 111 
+            sms = 0;
+            //#]
+            NOTIFY_STATE_ENTERED("ROOT.state_0.state_89.SMS");
+            pushNullTransition();
+            state_89_subState = SMS;
+            state_89_active = SMS;
+            NOTIFY_TRANSITION_TERMINATED("111");
+            res = eventConsumed;
+        }
+    
+    
+    return res;
+}
+
 void _SysVehicule::state_80_entDef() {
     NOTIFY_STATE_ENTERED("ROOT.state_0.state_80");
-    NOTIFY_TRANSITION_STARTED("89");
+    NOTIFY_TRANSITION_STARTED("96");
     NOTIFY_STATE_ENTERED("ROOT.state_0.state_80.musicoff");
     pushNullTransition();
     state_80_subState = musicoff;
@@ -1355,7 +1412,7 @@ void _SysVehicule::state_80_entDef() {
     //#[ state state_0.state_80.musicoff.(Entry) 
     music();
     //#]
-    NOTIFY_TRANSITION_TERMINATED("89");
+    NOTIFY_TRANSITION_TERMINATED("96");
 }
 
 void _SysVehicule::state_80_exit() {
@@ -1367,14 +1424,14 @@ void _SysVehicule::state_80_exit() {
             NOTIFY_STATE_EXITED("ROOT.state_0.state_80.musicoff");
         }
         break;
-        // State Song1
-        case Song1:
+        // State song1
+        case song1:
         {
             popNullTransition();
-            //#[ state state_0.state_80.Song1.(Exit) 
-            sound = 0;
+            //#[ state state_0.state_80.song1.(Exit) 
+            sound =0;
             //#]
-            NOTIFY_STATE_EXITED("ROOT.state_0.state_80.Song1");
+            NOTIFY_STATE_EXITED("ROOT.state_0.state_80.song1");
         }
         break;
         // State song2
@@ -1397,6 +1454,16 @@ void _SysVehicule::state_80_exit() {
             NOTIFY_STATE_EXITED("ROOT.state_0.state_80.song3");
         }
         break;
+        // State song1_2
+        case song1_2:
+        {
+            cancel(state_80_timeout);
+            //#[ state state_0.state_80.song1_2.(Exit) 
+            sound = 0;
+            //#]
+            NOTIFY_STATE_EXITED("ROOT.state_0.state_80.song1_2");
+        }
+        break;
         default:
             break;
     }
@@ -1413,29 +1480,29 @@ IOxfReactive::TakeEventStatus _SysVehicule::state_80_processEvent() {
         {
             if(IS_EVENT_TYPE_OF(OMNullEventId))
                 {
-                    //## transition 90 
+                    //## transition 89 
                     if(IS_IN(dangerBrake))
                         {
-                            NOTIFY_TRANSITION_STARTED("90");
+                            NOTIFY_TRANSITION_STARTED("89");
                             popNullTransition();
                             NOTIFY_STATE_EXITED("ROOT.state_0.state_80.musicoff");
-                            NOTIFY_STATE_ENTERED("ROOT.state_0.state_80.Song1");
+                            NOTIFY_STATE_ENTERED("ROOT.state_0.state_80.song1");
                             pushNullTransition();
-                            state_80_subState = Song1;
-                            state_80_active = Song1;
-                            //#[ state state_0.state_80.Song1.(Entry) 
+                            state_80_subState = song1;
+                            state_80_active = song1;
+                            //#[ state state_0.state_80.song1.(Entry) 
                             sound = 1;
                             music();
                             //#]
-                            NOTIFY_TRANSITION_TERMINATED("90");
+                            NOTIFY_TRANSITION_TERMINATED("89");
                             res = eventConsumed;
                         }
                     else
                         {
-                            //## transition 94 
+                            //## transition 90 
                             if(IS_IN(phone2Calling))
                                 {
-                                    NOTIFY_TRANSITION_STARTED("94");
+                                    NOTIFY_TRANSITION_STARTED("90");
                                     popNullTransition();
                                     NOTIFY_STATE_EXITED("ROOT.state_0.state_80.musicoff");
                                     NOTIFY_STATE_ENTERED("ROOT.state_0.state_80.song2");
@@ -1446,8 +1513,28 @@ IOxfReactive::TakeEventStatus _SysVehicule::state_80_processEvent() {
                                     sound = 2;
                                     music();
                                     //#]
-                                    NOTIFY_TRANSITION_TERMINATED("94");
+                                    NOTIFY_TRANSITION_TERMINATED("90");
                                     res = eventConsumed;
+                                }
+                            else
+                                {
+                                    //## transition 102 
+                                    if(IS_IN(limOffInatendu))
+                                        {
+                                            NOTIFY_TRANSITION_STARTED("102");
+                                            popNullTransition();
+                                            NOTIFY_STATE_EXITED("ROOT.state_0.state_80.musicoff");
+                                            NOTIFY_STATE_ENTERED("ROOT.state_0.state_80.song1_2");
+                                            state_80_subState = song1_2;
+                                            state_80_active = song1_2;
+                                            //#[ state state_0.state_80.song1_2.(Entry) 
+                                            sound = 1;
+                                            music();
+                                            //#]
+                                            state_80_timeout = scheduleTimeout(5000, "ROOT.state_0.state_80.song1_2");
+                                            NOTIFY_TRANSITION_TERMINATED("102");
+                                            res = eventConsumed;
+                                        }
                                 }
                         }
                 }
@@ -1455,20 +1542,20 @@ IOxfReactive::TakeEventStatus _SysVehicule::state_80_processEvent() {
             
         }
         break;
-        // State Song1
-        case Song1:
+        // State song1
+        case song1:
         {
             if(IS_EVENT_TYPE_OF(OMNullEventId))
                 {
-                    //## transition 91 
-                    if(IS_IN(safeSpeed))
+                    //## transition 101 
+                    if(IS_IN(safeSpeed) || ignition == false)
                         {
-                            NOTIFY_TRANSITION_STARTED("91");
+                            NOTIFY_TRANSITION_STARTED("101");
                             popNullTransition();
-                            //#[ state state_0.state_80.Song1.(Exit) 
-                            sound = 0;
+                            //#[ state state_0.state_80.song1.(Exit) 
+                            sound =0;
                             //#]
-                            NOTIFY_STATE_EXITED("ROOT.state_0.state_80.Song1");
+                            NOTIFY_STATE_EXITED("ROOT.state_0.state_80.song1");
                             NOTIFY_STATE_ENTERED("ROOT.state_0.state_80.musicoff");
                             pushNullTransition();
                             state_80_subState = musicoff;
@@ -1476,7 +1563,7 @@ IOxfReactive::TakeEventStatus _SysVehicule::state_80_processEvent() {
                             //#[ state state_0.state_80.musicoff.(Entry) 
                             music();
                             //#]
-                            NOTIFY_TRANSITION_TERMINATED("91");
+                            NOTIFY_TRANSITION_TERMINATED("101");
                             res = eventConsumed;
                         }
                 }
@@ -1487,69 +1574,75 @@ IOxfReactive::TakeEventStatus _SysVehicule::state_80_processEvent() {
         // State song2
         case song2:
         {
+            res = song2_handleEvent();
+        }
+        break;
+        // State song3
+        case song3:
+        {
             if(IS_EVENT_TYPE_OF(OMNullEventId))
                 {
-                    //## transition 95 
-                    if(IS_IN(callingAccept))
+                    //## transition 92 
+                    if(IS_IN(CallingDeny) || ignition == false)
                         {
-                            NOTIFY_TRANSITION_STARTED("95");
+                            NOTIFY_TRANSITION_STARTED("92");
                             popNullTransition();
-                            //#[ state state_0.state_80.song2.(Exit) 
+                            //#[ state state_0.state_80.song3.(Exit) 
                             sound = 0;
                             //#]
-                            NOTIFY_STATE_EXITED("ROOT.state_0.state_80.song2");
-                            NOTIFY_STATE_ENTERED("ROOT.state_0.state_80.song3");
+                            NOTIFY_STATE_EXITED("ROOT.state_0.state_80.song3");
+                            NOTIFY_STATE_ENTERED("ROOT.state_0.state_80.musicoff");
                             pushNullTransition();
-                            state_80_subState = song3;
-                            state_80_active = song3;
-                            //#[ state state_0.state_80.song3.(Entry) 
-                            sound = 3;
+                            state_80_subState = musicoff;
+                            state_80_active = musicoff;
+                            //#[ state state_0.state_80.musicoff.(Entry) 
                             music();
                             //#]
-                            NOTIFY_TRANSITION_TERMINATED("95");
+                            NOTIFY_TRANSITION_TERMINATED("92");
                             res = eventConsumed;
                         }
                     else
                         {
-                            //## transition 96 
+                            //## transition 95 
                             if(IS_IN(dangerBrake))
                                 {
-                                    NOTIFY_TRANSITION_STARTED("96");
+                                    NOTIFY_TRANSITION_STARTED("95");
                                     popNullTransition();
-                                    //#[ state state_0.state_80.song2.(Exit) 
+                                    //#[ state state_0.state_80.song3.(Exit) 
                                     sound = 0;
                                     //#]
-                                    NOTIFY_STATE_EXITED("ROOT.state_0.state_80.song2");
-                                    NOTIFY_STATE_ENTERED("ROOT.state_0.state_80.Song1");
+                                    NOTIFY_STATE_EXITED("ROOT.state_0.state_80.song3");
+                                    NOTIFY_STATE_ENTERED("ROOT.state_0.state_80.song1");
                                     pushNullTransition();
-                                    state_80_subState = Song1;
-                                    state_80_active = Song1;
-                                    //#[ state state_0.state_80.Song1.(Entry) 
+                                    state_80_subState = song1;
+                                    state_80_active = song1;
+                                    //#[ state state_0.state_80.song1.(Entry) 
                                     sound = 1;
                                     music();
                                     //#]
-                                    NOTIFY_TRANSITION_TERMINATED("96");
+                                    NOTIFY_TRANSITION_TERMINATED("95");
                                     res = eventConsumed;
                                 }
                             else
                                 {
-                                    //## transition 98 
-                                    if(IS_IN(callingDeny))
+                                    //## transition 103 
+                                    if(IS_IN(limOffInatendu))
                                         {
-                                            NOTIFY_TRANSITION_STARTED("98");
+                                            NOTIFY_TRANSITION_STARTED("103");
                                             popNullTransition();
-                                            //#[ state state_0.state_80.song2.(Exit) 
+                                            //#[ state state_0.state_80.song3.(Exit) 
                                             sound = 0;
                                             //#]
-                                            NOTIFY_STATE_EXITED("ROOT.state_0.state_80.song2");
-                                            NOTIFY_STATE_ENTERED("ROOT.state_0.state_80.musicoff");
-                                            pushNullTransition();
-                                            state_80_subState = musicoff;
-                                            state_80_active = musicoff;
-                                            //#[ state state_0.state_80.musicoff.(Entry) 
+                                            NOTIFY_STATE_EXITED("ROOT.state_0.state_80.song3");
+                                            NOTIFY_STATE_ENTERED("ROOT.state_0.state_80.song1_2");
+                                            state_80_subState = song1_2;
+                                            state_80_active = song1_2;
+                                            //#[ state state_0.state_80.song1_2.(Entry) 
+                                            sound = 1;
                                             music();
                                             //#]
-                                            NOTIFY_TRANSITION_TERMINATED("98");
+                                            state_80_timeout = scheduleTimeout(5000, "ROOT.state_0.state_80.song1_2");
+                                            NOTIFY_TRANSITION_TERMINATED("103");
                                             res = eventConsumed;
                                         }
                                 }
@@ -1559,52 +1652,28 @@ IOxfReactive::TakeEventStatus _SysVehicule::state_80_processEvent() {
             
         }
         break;
-        // State song3
-        case song3:
+        // State song1_2
+        case song1_2:
         {
-            if(IS_EVENT_TYPE_OF(OMNullEventId))
+            if(IS_EVENT_TYPE_OF(OMTimeoutEventId))
                 {
-                    //## transition 97 
-                    if(IS_IN(dangerBrake))
+                    if(getCurrentEvent() == state_80_timeout)
                         {
-                            NOTIFY_TRANSITION_STARTED("97");
-                            popNullTransition();
-                            //#[ state state_0.state_80.song3.(Exit) 
+                            NOTIFY_TRANSITION_STARTED("105");
+                            cancel(state_80_timeout);
+                            //#[ state state_0.state_80.song1_2.(Exit) 
                             sound = 0;
                             //#]
-                            NOTIFY_STATE_EXITED("ROOT.state_0.state_80.song3");
-                            NOTIFY_STATE_ENTERED("ROOT.state_0.state_80.Song1");
+                            NOTIFY_STATE_EXITED("ROOT.state_0.state_80.song1_2");
+                            NOTIFY_STATE_ENTERED("ROOT.state_0.state_80.musicoff");
                             pushNullTransition();
-                            state_80_subState = Song1;
-                            state_80_active = Song1;
-                            //#[ state state_0.state_80.Song1.(Entry) 
-                            sound = 1;
+                            state_80_subState = musicoff;
+                            state_80_active = musicoff;
+                            //#[ state state_0.state_80.musicoff.(Entry) 
                             music();
                             //#]
-                            NOTIFY_TRANSITION_TERMINATED("97");
+                            NOTIFY_TRANSITION_TERMINATED("105");
                             res = eventConsumed;
-                        }
-                    else
-                        {
-                            //## transition 99 
-                            if(IS_IN(callingDeny))
-                                {
-                                    NOTIFY_TRANSITION_STARTED("99");
-                                    popNullTransition();
-                                    //#[ state state_0.state_80.song3.(Exit) 
-                                    sound = 0;
-                                    //#]
-                                    NOTIFY_STATE_EXITED("ROOT.state_0.state_80.song3");
-                                    NOTIFY_STATE_ENTERED("ROOT.state_0.state_80.musicoff");
-                                    pushNullTransition();
-                                    state_80_subState = musicoff;
-                                    state_80_active = musicoff;
-                                    //#[ state state_0.state_80.musicoff.(Entry) 
-                                    music();
-                                    //#]
-                                    NOTIFY_TRANSITION_TERMINATED("99");
-                                    res = eventConsumed;
-                                }
                         }
                 }
             
@@ -1614,6 +1683,110 @@ IOxfReactive::TakeEventStatus _SysVehicule::state_80_processEvent() {
         default:
             break;
     }
+    return res;
+}
+
+IOxfReactive::TakeEventStatus _SysVehicule::song2TakeNull() {
+    IOxfReactive::TakeEventStatus res = eventNotConsumed;
+    //## transition 91 
+    if(IS_IN(CallingDeny) || ignition == false)
+        {
+            NOTIFY_TRANSITION_STARTED("91");
+            popNullTransition();
+            //#[ state state_0.state_80.song2.(Exit) 
+            sound = 0;
+            //#]
+            NOTIFY_STATE_EXITED("ROOT.state_0.state_80.song2");
+            NOTIFY_STATE_ENTERED("ROOT.state_0.state_80.musicoff");
+            pushNullTransition();
+            state_80_subState = musicoff;
+            state_80_active = musicoff;
+            //#[ state state_0.state_80.musicoff.(Entry) 
+            music();
+            //#]
+            NOTIFY_TRANSITION_TERMINATED("91");
+            res = eventConsumed;
+        }
+    else
+        {
+            //## transition 93 
+            if(IS_IN(callingAccept))
+                {
+                    NOTIFY_TRANSITION_STARTED("93");
+                    popNullTransition();
+                    //#[ state state_0.state_80.song2.(Exit) 
+                    sound = 0;
+                    //#]
+                    NOTIFY_STATE_EXITED("ROOT.state_0.state_80.song2");
+                    NOTIFY_STATE_ENTERED("ROOT.state_0.state_80.song3");
+                    pushNullTransition();
+                    state_80_subState = song3;
+                    state_80_active = song3;
+                    //#[ state state_0.state_80.song3.(Entry) 
+                    sound = 3;
+                    music();
+                    //#]
+                    NOTIFY_TRANSITION_TERMINATED("93");
+                    res = eventConsumed;
+                }
+            else
+                {
+                    //## transition 94 
+                    if(IS_IN(dangerBrake))
+                        {
+                            NOTIFY_TRANSITION_STARTED("94");
+                            popNullTransition();
+                            //#[ state state_0.state_80.song2.(Exit) 
+                            sound = 0;
+                            //#]
+                            NOTIFY_STATE_EXITED("ROOT.state_0.state_80.song2");
+                            NOTIFY_STATE_ENTERED("ROOT.state_0.state_80.song1");
+                            pushNullTransition();
+                            state_80_subState = song1;
+                            state_80_active = song1;
+                            //#[ state state_0.state_80.song1.(Entry) 
+                            sound = 1;
+                            music();
+                            //#]
+                            NOTIFY_TRANSITION_TERMINATED("94");
+                            res = eventConsumed;
+                        }
+                    else
+                        {
+                            //## transition 104 
+                            if(IS_IN(limOffInatendu))
+                                {
+                                    NOTIFY_TRANSITION_STARTED("104");
+                                    popNullTransition();
+                                    //#[ state state_0.state_80.song2.(Exit) 
+                                    sound = 0;
+                                    //#]
+                                    NOTIFY_STATE_EXITED("ROOT.state_0.state_80.song2");
+                                    NOTIFY_STATE_ENTERED("ROOT.state_0.state_80.song1_2");
+                                    state_80_subState = song1_2;
+                                    state_80_active = song1_2;
+                                    //#[ state state_0.state_80.song1_2.(Entry) 
+                                    sound = 1;
+                                    music();
+                                    //#]
+                                    state_80_timeout = scheduleTimeout(5000, "ROOT.state_0.state_80.song1_2");
+                                    NOTIFY_TRANSITION_TERMINATED("104");
+                                    res = eventConsumed;
+                                }
+                        }
+                }
+        }
+    return res;
+}
+
+IOxfReactive::TakeEventStatus _SysVehicule::song2_handleEvent() {
+    IOxfReactive::TakeEventStatus res = eventNotConsumed;
+    if(IS_EVENT_TYPE_OF(OMNullEventId))
+        {
+            res = song2TakeNull();
+        }
+    
+    
     return res;
 }
 
@@ -1684,12 +1857,12 @@ IOxfReactive::TakeEventStatus _SysVehicule::state_77_processEvent() {
 
 void _SysVehicule::state_73_entDef() {
     NOTIFY_STATE_ENTERED("ROOT.state_0.state_73");
-    NOTIFY_TRANSITION_STARTED("81");
+    NOTIFY_TRANSITION_STARTED("82");
     NOTIFY_STATE_ENTERED("ROOT.state_0.state_73.vehiculeABS");
     pushNullTransition();
     state_73_subState = vehiculeABS;
     state_73_active = vehiculeABS;
-    NOTIFY_TRANSITION_TERMINATED("81");
+    NOTIFY_TRANSITION_TERMINATED("82");
 }
 
 IOxfReactive::TakeEventStatus _SysVehicule::state_73_processEvent() {
@@ -1700,10 +1873,10 @@ IOxfReactive::TakeEventStatus _SysVehicule::state_73_processEvent() {
         {
             if(IS_EVENT_TYPE_OF(OMNullEventId))
                 {
-                    //## transition 78 
+                    //## transition 79 
                     if(secondVehicule == true)
                         {
-                            NOTIFY_TRANSITION_STARTED("78");
+                            NOTIFY_TRANSITION_STARTED("79");
                             popNullTransition();
                             NOTIFY_STATE_EXITED("ROOT.state_0.state_73.vehiculeABS");
                             NOTIFY_STATE_ENTERED("ROOT.state_0.state_73.vehiculePresent");
@@ -1711,7 +1884,7 @@ IOxfReactive::TakeEventStatus _SysVehicule::state_73_processEvent() {
                             state_73_subState = vehiculePresent;
                             state_73_active = vehiculePresent;
                             state_73_timeout = scheduleTimeout(200, "ROOT.state_0.state_73.vehiculePresent");
-                            NOTIFY_TRANSITION_TERMINATED("78");
+                            NOTIFY_TRANSITION_TERMINATED("79");
                             res = eventConsumed;
                         }
                 }
@@ -1726,7 +1899,7 @@ IOxfReactive::TakeEventStatus _SysVehicule::state_73_processEvent() {
                 {
                     if(getCurrentEvent() == state_73_timeout)
                         {
-                            NOTIFY_TRANSITION_STARTED("80");
+                            NOTIFY_TRANSITION_STARTED("81");
                             popNullTransition();
                             cancel(state_73_timeout);
                             NOTIFY_STATE_EXITED("ROOT.state_0.state_73.vehiculePresent");
@@ -1735,16 +1908,16 @@ IOxfReactive::TakeEventStatus _SysVehicule::state_73_processEvent() {
                             state_73_subState = vehiculePresent;
                             state_73_active = vehiculePresent;
                             state_73_timeout = scheduleTimeout(200, "ROOT.state_0.state_73.vehiculePresent");
-                            NOTIFY_TRANSITION_TERMINATED("80");
+                            NOTIFY_TRANSITION_TERMINATED("81");
                             res = eventConsumed;
                         }
                 }
             else if(IS_EVENT_TYPE_OF(OMNullEventId))
                 {
-                    //## transition 79 
+                    //## transition 80 
                     if(secondVehicule == false)
                         {
-                            NOTIFY_TRANSITION_STARTED("79");
+                            NOTIFY_TRANSITION_STARTED("80");
                             popNullTransition();
                             cancel(state_73_timeout);
                             NOTIFY_STATE_EXITED("ROOT.state_0.state_73.vehiculePresent");
@@ -1752,7 +1925,7 @@ IOxfReactive::TakeEventStatus _SysVehicule::state_73_processEvent() {
                             pushNullTransition();
                             state_73_subState = vehiculeABS;
                             state_73_active = vehiculeABS;
-                            NOTIFY_TRANSITION_TERMINATED("79");
+                            NOTIFY_TRANSITION_TERMINATED("80");
                             res = eventConsumed;
                         }
                 }
@@ -1768,12 +1941,12 @@ IOxfReactive::TakeEventStatus _SysVehicule::state_73_processEvent() {
 
 void _SysVehicule::state_68_entDef() {
     NOTIFY_STATE_ENTERED("ROOT.state_0.state_68");
-    NOTIFY_TRANSITION_STARTED("70");
+    NOTIFY_TRANSITION_STARTED("71");
     NOTIFY_STATE_ENTERED("ROOT.state_0.state_68.Neutre2");
     pushNullTransition();
     state_68_subState = Neutre2;
     state_68_active = Neutre2;
-    NOTIFY_TRANSITION_TERMINATED("70");
+    NOTIFY_TRANSITION_TERMINATED("71");
 }
 
 IOxfReactive::TakeEventStatus _SysVehicule::state_68_processEvent() {
@@ -1790,10 +1963,10 @@ IOxfReactive::TakeEventStatus _SysVehicule::state_68_processEvent() {
         {
             if(IS_EVENT_TYPE_OF(OMNullEventId))
                 {
-                    //## transition 72 
+                    //## transition 73 
                     if(accelPedal2>0.2 && secondVehicule==true)
                         {
-                            NOTIFY_TRANSITION_STARTED("72");
+                            NOTIFY_TRANSITION_STARTED("73");
                             popNullTransition();
                             NOTIFY_STATE_EXITED("ROOT.state_0.state_68.Neutre2");
                             NOTIFY_STATE_ENTERED("ROOT.state_0.state_68.Accelerartion2");
@@ -1804,15 +1977,15 @@ IOxfReactive::TakeEventStatus _SysVehicule::state_68_processEvent() {
                             accelerer2(accelPedal2);
                             //#]
                             state_68_timeout = scheduleTimeout(200, "ROOT.state_0.state_68.Accelerartion2");
-                            NOTIFY_TRANSITION_TERMINATED("72");
+                            NOTIFY_TRANSITION_TERMINATED("73");
                             res = eventConsumed;
                         }
                     else
                         {
-                            //## transition 76 
+                            //## transition 77 
                             if(brakePedal2>0.2)
                                 {
-                                    NOTIFY_TRANSITION_STARTED("76");
+                                    NOTIFY_TRANSITION_STARTED("77");
                                     popNullTransition();
                                     NOTIFY_STATE_EXITED("ROOT.state_0.state_68.Neutre2");
                                     NOTIFY_STATE_ENTERED("ROOT.state_0.state_68.Freint2");
@@ -1823,7 +1996,7 @@ IOxfReactive::TakeEventStatus _SysVehicule::state_68_processEvent() {
                                     freiner2(brakePedal2);
                                     //#]
                                     state_68_timeout = scheduleTimeout(200, "ROOT.state_0.state_68.Freint2");
-                                    NOTIFY_TRANSITION_TERMINATED("76");
+                                    NOTIFY_TRANSITION_TERMINATED("77");
                                     res = eventConsumed;
                                 }
                         }
@@ -1839,7 +2012,7 @@ IOxfReactive::TakeEventStatus _SysVehicule::state_68_processEvent() {
                 {
                     if(getCurrentEvent() == state_68_timeout)
                         {
-                            NOTIFY_TRANSITION_STARTED("77");
+                            NOTIFY_TRANSITION_STARTED("78");
                             popNullTransition();
                             cancel(state_68_timeout);
                             NOTIFY_STATE_EXITED("ROOT.state_0.state_68.Freint2");
@@ -1851,16 +2024,16 @@ IOxfReactive::TakeEventStatus _SysVehicule::state_68_processEvent() {
                             freiner2(brakePedal2);
                             //#]
                             state_68_timeout = scheduleTimeout(200, "ROOT.state_0.state_68.Freint2");
-                            NOTIFY_TRANSITION_TERMINATED("77");
+                            NOTIFY_TRANSITION_TERMINATED("78");
                             res = eventConsumed;
                         }
                 }
             else if(IS_EVENT_TYPE_OF(OMNullEventId))
                 {
-                    //## transition 74 
+                    //## transition 75 
                     if(brakePedal2<0.2)
                         {
-                            NOTIFY_TRANSITION_STARTED("74");
+                            NOTIFY_TRANSITION_STARTED("75");
                             popNullTransition();
                             cancel(state_68_timeout);
                             NOTIFY_STATE_EXITED("ROOT.state_0.state_68.Freint2");
@@ -1868,7 +2041,7 @@ IOxfReactive::TakeEventStatus _SysVehicule::state_68_processEvent() {
                             pushNullTransition();
                             state_68_subState = Neutre2;
                             state_68_active = Neutre2;
-                            NOTIFY_TRANSITION_TERMINATED("74");
+                            NOTIFY_TRANSITION_TERMINATED("75");
                             res = eventConsumed;
                         }
                 }
@@ -1888,10 +2061,10 @@ IOxfReactive::TakeEventStatus _SysVehicule::Accelerartion2_handleEvent() {
         {
             if(getCurrentEvent() == state_68_timeout)
                 {
-                    //## transition 71 
+                    //## transition 72 
                     if(IS_IN(vehiculePresent))
                         {
-                            NOTIFY_TRANSITION_STARTED("71");
+                            NOTIFY_TRANSITION_STARTED("72");
                             popNullTransition();
                             cancel(state_68_timeout);
                             NOTIFY_STATE_EXITED("ROOT.state_0.state_68.Accelerartion2");
@@ -1903,17 +2076,17 @@ IOxfReactive::TakeEventStatus _SysVehicule::Accelerartion2_handleEvent() {
                             accelerer2(accelPedal2);
                             //#]
                             state_68_timeout = scheduleTimeout(200, "ROOT.state_0.state_68.Accelerartion2");
-                            NOTIFY_TRANSITION_TERMINATED("71");
+                            NOTIFY_TRANSITION_TERMINATED("72");
                             res = eventConsumed;
                         }
                 }
         }
     else if(IS_EVENT_TYPE_OF(OMNullEventId))
         {
-            //## transition 73 
+            //## transition 74 
             if(accelPedal2<0.2 || secondVehicule==false )
                 {
-                    NOTIFY_TRANSITION_STARTED("73");
+                    NOTIFY_TRANSITION_STARTED("74");
                     popNullTransition();
                     cancel(state_68_timeout);
                     NOTIFY_STATE_EXITED("ROOT.state_0.state_68.Accelerartion2");
@@ -1921,15 +2094,15 @@ IOxfReactive::TakeEventStatus _SysVehicule::Accelerartion2_handleEvent() {
                     pushNullTransition();
                     state_68_subState = Neutre2;
                     state_68_active = Neutre2;
-                    NOTIFY_TRANSITION_TERMINATED("73");
+                    NOTIFY_TRANSITION_TERMINATED("74");
                     res = eventConsumed;
                 }
             else
                 {
-                    //## transition 75 
+                    //## transition 76 
                     if(brakePedal2>0.2)
                         {
-                            NOTIFY_TRANSITION_STARTED("75");
+                            NOTIFY_TRANSITION_STARTED("76");
                             popNullTransition();
                             cancel(state_68_timeout);
                             NOTIFY_STATE_EXITED("ROOT.state_0.state_68.Accelerartion2");
@@ -1941,7 +2114,7 @@ IOxfReactive::TakeEventStatus _SysVehicule::Accelerartion2_handleEvent() {
                             freiner2(brakePedal2);
                             //#]
                             state_68_timeout = scheduleTimeout(200, "ROOT.state_0.state_68.Freint2");
-                            NOTIFY_TRANSITION_TERMINATED("75");
+                            NOTIFY_TRANSITION_TERMINATED("76");
                             res = eventConsumed;
                         }
                 }
@@ -1953,12 +2126,12 @@ IOxfReactive::TakeEventStatus _SysVehicule::Accelerartion2_handleEvent() {
 
 void _SysVehicule::state_67_entDef() {
     NOTIFY_STATE_ENTERED("ROOT.state_0.state_67");
-    NOTIFY_TRANSITION_STARTED("68");
+    NOTIFY_TRANSITION_STARTED("69");
     NOTIFY_STATE_ENTERED("ROOT.state_0.state_67.Calcul_Vitesse_Distance2");
     state_67_subState = Calcul_Vitesse_Distance2;
     state_67_active = Calcul_Vitesse_Distance2;
     state_67_timeout = scheduleTimeout(50, "ROOT.state_0.state_67.Calcul_Vitesse_Distance2");
-    NOTIFY_TRANSITION_TERMINATED("68");
+    NOTIFY_TRANSITION_TERMINATED("69");
 }
 
 void _SysVehicule::state_67_exit() {
@@ -1982,17 +2155,17 @@ IOxfReactive::TakeEventStatus _SysVehicule::state_67_processEvent() {
                 {
                     if(getCurrentEvent() == state_67_timeout)
                         {
-                            NOTIFY_TRANSITION_STARTED("69");
+                            NOTIFY_TRANSITION_STARTED("70");
                             cancel(state_67_timeout);
                             NOTIFY_STATE_EXITED("ROOT.state_0.state_67.Calcul_Vitesse_Distance2");
-                            //#[ transition 69 
+                            //#[ transition 70 
                             CalculVitesse2(throttle2);
                             //#]
                             NOTIFY_STATE_ENTERED("ROOT.state_0.state_67.Calcul_Vitesse_Distance2");
                             state_67_subState = Calcul_Vitesse_Distance2;
                             state_67_active = Calcul_Vitesse_Distance2;
                             state_67_timeout = scheduleTimeout(50, "ROOT.state_0.state_67.Calcul_Vitesse_Distance2");
-                            NOTIFY_TRANSITION_TERMINATED("69");
+                            NOTIFY_TRANSITION_TERMINATED("70");
                             res = eventConsumed;
                         }
                 }
@@ -2004,12 +2177,12 @@ IOxfReactive::TakeEventStatus _SysVehicule::state_67_processEvent() {
 
 void _SysVehicule::state_58_entDef() {
     NOTIFY_STATE_ENTERED("ROOT.state_0.state_58");
-    NOTIFY_TRANSITION_STARTED("58");
+    NOTIFY_TRANSITION_STARTED("59");
     NOTIFY_STATE_ENTERED("ROOT.state_0.state_58.bluetoothWaiting");
     pushNullTransition();
     state_58_subState = bluetoothWaiting;
     state_58_active = bluetoothWaiting;
-    NOTIFY_TRANSITION_TERMINATED("58");
+    NOTIFY_TRANSITION_TERMINATED("59");
 }
 
 void _SysVehicule::state_58_exit() {
@@ -2064,20 +2237,20 @@ IOxfReactive::TakeEventStatus _SysVehicule::state_58_processEvent() {
         {
             if(IS_EVENT_TYPE_OF(OMNullEventId))
                 {
-                    //## transition 63 
+                    //## transition 64 
                     if(bluetooth== false || ignition == false)
                         {
-                            NOTIFY_TRANSITION_STARTED("63");
+                            NOTIFY_TRANSITION_STARTED("64");
                             popNullTransition();
                             NOTIFY_STATE_EXITED("ROOT.state_0.state_58.unlockedPhone");
-                            //#[ transition 63 
+                            //#[ transition 64 
                             bluetooth = false;
                             //#]
                             NOTIFY_STATE_ENTERED("ROOT.state_0.state_58.bluetoothWaiting");
                             pushNullTransition();
                             state_58_subState = bluetoothWaiting;
                             state_58_active = bluetoothWaiting;
-                            NOTIFY_TRANSITION_TERMINATED("63");
+                            NOTIFY_TRANSITION_TERMINATED("64");
                             res = eventConsumed;
                         }
                 }
@@ -2090,17 +2263,17 @@ IOxfReactive::TakeEventStatus _SysVehicule::state_58_processEvent() {
         {
             if(IS_EVENT_TYPE_OF(OMNullEventId))
                 {
-                    //## transition 60 
+                    //## transition 61 
                     if(bluetooth == true && ignition == true)
                         {
-                            NOTIFY_TRANSITION_STARTED("60");
+                            NOTIFY_TRANSITION_STARTED("61");
                             popNullTransition();
                             NOTIFY_STATE_EXITED("ROOT.state_0.state_58.bluetoothWaiting");
                             NOTIFY_STATE_ENTERED("ROOT.state_0.state_58.bluetoothOn");
                             pushNullTransition();
                             state_58_subState = state_58_bluetoothOn;
                             state_58_active = state_58_bluetoothOn;
-                            NOTIFY_TRANSITION_TERMINATED("60");
+                            NOTIFY_TRANSITION_TERMINATED("61");
                             res = eventConsumed;
                         }
                 }
@@ -2113,7 +2286,7 @@ IOxfReactive::TakeEventStatus _SysVehicule::state_58_processEvent() {
         {
             if(IS_EVENT_TYPE_OF(evBTVehicule__MonPkg_id))
                 {
-                    NOTIFY_TRANSITION_STARTED("59");
+                    NOTIFY_TRANSITION_STARTED("60");
                     popNullTransition();
                     NOTIFY_STATE_EXITED("ROOT.state_0.state_58.bluetoothOn");
                     NOTIFY_STATE_ENTERED("ROOT.state_0.state_58.phoneCode");
@@ -2123,25 +2296,25 @@ IOxfReactive::TakeEventStatus _SysVehicule::state_58_processEvent() {
                     //#[ state state_0.state_58.phoneCode.(Entry) 
                     testCode();
                     //#]
-                    NOTIFY_TRANSITION_TERMINATED("59");
+                    NOTIFY_TRANSITION_TERMINATED("60");
                     res = eventConsumed;
                 }
             else if(IS_EVENT_TYPE_OF(OMNullEventId))
                 {
-                    //## transition 61 
+                    //## transition 62 
                     if(bluetooth == false || ignition == false)
                         {
-                            NOTIFY_TRANSITION_STARTED("61");
+                            NOTIFY_TRANSITION_STARTED("62");
                             popNullTransition();
                             NOTIFY_STATE_EXITED("ROOT.state_0.state_58.bluetoothOn");
-                            //#[ transition 61 
+                            //#[ transition 62 
                             bluetooth = false;
                             //#]
                             NOTIFY_STATE_ENTERED("ROOT.state_0.state_58.bluetoothWaiting");
                             pushNullTransition();
                             state_58_subState = bluetoothWaiting;
                             state_58_active = bluetoothWaiting;
-                            NOTIFY_TRANSITION_TERMINATED("61");
+                            NOTIFY_TRANSITION_TERMINATED("62");
                             res = eventConsumed;
                         }
                 }
@@ -2159,29 +2332,11 @@ IOxfReactive::TakeEventStatus _SysVehicule::phoneCode_handleEvent() {
     IOxfReactive::TakeEventStatus res = eventNotConsumed;
     if(IS_EVENT_TYPE_OF(ev3__MonPkg_id))
         {
-            NOTIFY_TRANSITION_STARTED("49");
-            popNullTransition();
-            NOTIFY_STATE_EXITED("ROOT.state_0.state_58.phoneCode");
-            //#[ transition 49 
-            code = (code*10)+3;
-            //#]
-            NOTIFY_STATE_ENTERED("ROOT.state_0.state_58.phoneCode");
-            pushNullTransition();
-            state_58_subState = phoneCode;
-            state_58_active = phoneCode;
-            //#[ state state_0.state_58.phoneCode.(Entry) 
-            testCode();
-            //#]
-            NOTIFY_TRANSITION_TERMINATED("49");
-            res = eventConsumed;
-        }
-    else if(IS_EVENT_TYPE_OF(ev4__MonPkg_id))
-        {
             NOTIFY_TRANSITION_STARTED("50");
             popNullTransition();
             NOTIFY_STATE_EXITED("ROOT.state_0.state_58.phoneCode");
             //#[ transition 50 
-            code = (code*10)+4;
+            code = (code*10)+3;
             //#]
             NOTIFY_STATE_ENTERED("ROOT.state_0.state_58.phoneCode");
             pushNullTransition();
@@ -2193,13 +2348,13 @@ IOxfReactive::TakeEventStatus _SysVehicule::phoneCode_handleEvent() {
             NOTIFY_TRANSITION_TERMINATED("50");
             res = eventConsumed;
         }
-    else if(IS_EVENT_TYPE_OF(ev5__MonPkg_id))
+    else if(IS_EVENT_TYPE_OF(ev4__MonPkg_id))
         {
             NOTIFY_TRANSITION_STARTED("51");
             popNullTransition();
             NOTIFY_STATE_EXITED("ROOT.state_0.state_58.phoneCode");
             //#[ transition 51 
-            code = (code*10)+5;
+            code = (code*10)+4;
             //#]
             NOTIFY_STATE_ENTERED("ROOT.state_0.state_58.phoneCode");
             pushNullTransition();
@@ -2211,13 +2366,13 @@ IOxfReactive::TakeEventStatus _SysVehicule::phoneCode_handleEvent() {
             NOTIFY_TRANSITION_TERMINATED("51");
             res = eventConsumed;
         }
-    else if(IS_EVENT_TYPE_OF(ev6__MonPkg_id))
+    else if(IS_EVENT_TYPE_OF(ev5__MonPkg_id))
         {
             NOTIFY_TRANSITION_STARTED("52");
             popNullTransition();
             NOTIFY_STATE_EXITED("ROOT.state_0.state_58.phoneCode");
             //#[ transition 52 
-            code = (code*10)+6;
+            code = (code*10)+5;
             //#]
             NOTIFY_STATE_ENTERED("ROOT.state_0.state_58.phoneCode");
             pushNullTransition();
@@ -2229,13 +2384,13 @@ IOxfReactive::TakeEventStatus _SysVehicule::phoneCode_handleEvent() {
             NOTIFY_TRANSITION_TERMINATED("52");
             res = eventConsumed;
         }
-    else if(IS_EVENT_TYPE_OF(ev7__MonPkg_id))
+    else if(IS_EVENT_TYPE_OF(ev6__MonPkg_id))
         {
             NOTIFY_TRANSITION_STARTED("53");
             popNullTransition();
             NOTIFY_STATE_EXITED("ROOT.state_0.state_58.phoneCode");
             //#[ transition 53 
-            code = (code*10)+7;
+            code = (code*10)+6;
             //#]
             NOTIFY_STATE_ENTERED("ROOT.state_0.state_58.phoneCode");
             pushNullTransition();
@@ -2247,51 +2402,13 @@ IOxfReactive::TakeEventStatus _SysVehicule::phoneCode_handleEvent() {
             NOTIFY_TRANSITION_TERMINATED("53");
             res = eventConsumed;
         }
-    else if(IS_EVENT_TYPE_OF(OMNullEventId))
-        {
-            //## transition 57 
-            if(code == 1234)
-                {
-                    NOTIFY_TRANSITION_STARTED("57");
-                    popNullTransition();
-                    NOTIFY_STATE_EXITED("ROOT.state_0.state_58.phoneCode");
-                    NOTIFY_STATE_ENTERED("ROOT.state_0.state_58.unlockedPhone");
-                    pushNullTransition();
-                    state_58_subState = unlockedPhone;
-                    state_58_active = unlockedPhone;
-                    //#[ state state_0.state_58.unlockedPhone.(Entry) 
-                    code = 0;
-                    //#]
-                    NOTIFY_TRANSITION_TERMINATED("57");
-                    res = eventConsumed;
-                }
-            else
-                {
-                    //## transition 62 
-                    if(bluetooth == false || ignition == false)
-                        {
-                            NOTIFY_TRANSITION_STARTED("62");
-                            popNullTransition();
-                            NOTIFY_STATE_EXITED("ROOT.state_0.state_58.phoneCode");
-                            //#[ transition 62 
-                            bluetooth = false;
-                            //#]
-                            NOTIFY_STATE_ENTERED("ROOT.state_0.state_58.bluetoothWaiting");
-                            pushNullTransition();
-                            state_58_subState = bluetoothWaiting;
-                            state_58_active = bluetoothWaiting;
-                            NOTIFY_TRANSITION_TERMINATED("62");
-                            res = eventConsumed;
-                        }
-                }
-        }
-    else if(IS_EVENT_TYPE_OF(ev8__MonPkg_id))
+    else if(IS_EVENT_TYPE_OF(ev7__MonPkg_id))
         {
             NOTIFY_TRANSITION_STARTED("54");
             popNullTransition();
             NOTIFY_STATE_EXITED("ROOT.state_0.state_58.phoneCode");
             //#[ transition 54 
-            code = (code*10)+8;
+            code = (code*10)+7;
             //#]
             NOTIFY_STATE_ENTERED("ROOT.state_0.state_58.phoneCode");
             pushNullTransition();
@@ -2303,13 +2420,51 @@ IOxfReactive::TakeEventStatus _SysVehicule::phoneCode_handleEvent() {
             NOTIFY_TRANSITION_TERMINATED("54");
             res = eventConsumed;
         }
-    else if(IS_EVENT_TYPE_OF(ev9__MonPkg_id))
+    else if(IS_EVENT_TYPE_OF(OMNullEventId))
+        {
+            //## transition 58 
+            if(code == 1234)
+                {
+                    NOTIFY_TRANSITION_STARTED("58");
+                    popNullTransition();
+                    NOTIFY_STATE_EXITED("ROOT.state_0.state_58.phoneCode");
+                    NOTIFY_STATE_ENTERED("ROOT.state_0.state_58.unlockedPhone");
+                    pushNullTransition();
+                    state_58_subState = unlockedPhone;
+                    state_58_active = unlockedPhone;
+                    //#[ state state_0.state_58.unlockedPhone.(Entry) 
+                    code = 0;
+                    //#]
+                    NOTIFY_TRANSITION_TERMINATED("58");
+                    res = eventConsumed;
+                }
+            else
+                {
+                    //## transition 63 
+                    if(bluetooth == false || ignition == false)
+                        {
+                            NOTIFY_TRANSITION_STARTED("63");
+                            popNullTransition();
+                            NOTIFY_STATE_EXITED("ROOT.state_0.state_58.phoneCode");
+                            //#[ transition 63 
+                            bluetooth = false;
+                            //#]
+                            NOTIFY_STATE_ENTERED("ROOT.state_0.state_58.bluetoothWaiting");
+                            pushNullTransition();
+                            state_58_subState = bluetoothWaiting;
+                            state_58_active = bluetoothWaiting;
+                            NOTIFY_TRANSITION_TERMINATED("63");
+                            res = eventConsumed;
+                        }
+                }
+        }
+    else if(IS_EVENT_TYPE_OF(ev8__MonPkg_id))
         {
             NOTIFY_TRANSITION_STARTED("55");
             popNullTransition();
             NOTIFY_STATE_EXITED("ROOT.state_0.state_58.phoneCode");
             //#[ transition 55 
-            code = (code*10)+9;
+            code = (code*10)+8;
             //#]
             NOTIFY_STATE_ENTERED("ROOT.state_0.state_58.phoneCode");
             pushNullTransition();
@@ -2321,13 +2476,13 @@ IOxfReactive::TakeEventStatus _SysVehicule::phoneCode_handleEvent() {
             NOTIFY_TRANSITION_TERMINATED("55");
             res = eventConsumed;
         }
-    else if(IS_EVENT_TYPE_OF(evReset__MonPkg_id))
+    else if(IS_EVENT_TYPE_OF(ev9__MonPkg_id))
         {
             NOTIFY_TRANSITION_STARTED("56");
             popNullTransition();
             NOTIFY_STATE_EXITED("ROOT.state_0.state_58.phoneCode");
             //#[ transition 56 
-            code=0;
+            code = (code*10)+9;
             //#]
             NOTIFY_STATE_ENTERED("ROOT.state_0.state_58.phoneCode");
             pushNullTransition();
@@ -2339,13 +2494,13 @@ IOxfReactive::TakeEventStatus _SysVehicule::phoneCode_handleEvent() {
             NOTIFY_TRANSITION_TERMINATED("56");
             res = eventConsumed;
         }
-    else if(IS_EVENT_TYPE_OF(ev0__MonPkg_id))
+    else if(IS_EVENT_TYPE_OF(evReset__MonPkg_id))
         {
-            NOTIFY_TRANSITION_STARTED("46");
+            NOTIFY_TRANSITION_STARTED("57");
             popNullTransition();
             NOTIFY_STATE_EXITED("ROOT.state_0.state_58.phoneCode");
-            //#[ transition 46 
-            code = (code*10)+0;
+            //#[ transition 57 
+            code=0;
             //#]
             NOTIFY_STATE_ENTERED("ROOT.state_0.state_58.phoneCode");
             pushNullTransition();
@@ -2354,16 +2509,16 @@ IOxfReactive::TakeEventStatus _SysVehicule::phoneCode_handleEvent() {
             //#[ state state_0.state_58.phoneCode.(Entry) 
             testCode();
             //#]
-            NOTIFY_TRANSITION_TERMINATED("46");
+            NOTIFY_TRANSITION_TERMINATED("57");
             res = eventConsumed;
         }
-    else if(IS_EVENT_TYPE_OF(ev1__MonPkg_id))
+    else if(IS_EVENT_TYPE_OF(ev0__MonPkg_id))
         {
             NOTIFY_TRANSITION_STARTED("47");
             popNullTransition();
             NOTIFY_STATE_EXITED("ROOT.state_0.state_58.phoneCode");
             //#[ transition 47 
-            code = (code*10)+1;
+            code = (code*10)+0;
             //#]
             NOTIFY_STATE_ENTERED("ROOT.state_0.state_58.phoneCode");
             pushNullTransition();
@@ -2375,13 +2530,13 @@ IOxfReactive::TakeEventStatus _SysVehicule::phoneCode_handleEvent() {
             NOTIFY_TRANSITION_TERMINATED("47");
             res = eventConsumed;
         }
-    else if(IS_EVENT_TYPE_OF(ev2__MonPkg_id))
+    else if(IS_EVENT_TYPE_OF(ev1__MonPkg_id))
         {
             NOTIFY_TRANSITION_STARTED("48");
             popNullTransition();
             NOTIFY_STATE_EXITED("ROOT.state_0.state_58.phoneCode");
             //#[ transition 48 
-            code = (code*10)+2;
+            code = (code*10)+1;
             //#]
             NOTIFY_STATE_ENTERED("ROOT.state_0.state_58.phoneCode");
             pushNullTransition();
@@ -2393,6 +2548,24 @@ IOxfReactive::TakeEventStatus _SysVehicule::phoneCode_handleEvent() {
             NOTIFY_TRANSITION_TERMINATED("48");
             res = eventConsumed;
         }
+    else if(IS_EVENT_TYPE_OF(ev2__MonPkg_id))
+        {
+            NOTIFY_TRANSITION_STARTED("49");
+            popNullTransition();
+            NOTIFY_STATE_EXITED("ROOT.state_0.state_58.phoneCode");
+            //#[ transition 49 
+            code = (code*10)+2;
+            //#]
+            NOTIFY_STATE_ENTERED("ROOT.state_0.state_58.phoneCode");
+            pushNullTransition();
+            state_58_subState = phoneCode;
+            state_58_active = phoneCode;
+            //#[ state state_0.state_58.phoneCode.(Entry) 
+            testCode();
+            //#]
+            NOTIFY_TRANSITION_TERMINATED("49");
+            res = eventConsumed;
+        }
     
     
     return res;
@@ -2400,14 +2573,15 @@ IOxfReactive::TakeEventStatus _SysVehicule::phoneCode_handleEvent() {
 
 void _SysVehicule::state_57_entDef() {
     NOTIFY_STATE_ENTERED("ROOT.state_0.state_57");
-    NOTIFY_TRANSITION_STARTED("64");
+    NOTIFY_TRANSITION_STARTED("65");
     NOTIFY_STATE_ENTERED("ROOT.state_0.state_57.phone2Initial");
+    pushNullTransition();
     state_57_subState = phone2Initial;
     state_57_active = phone2Initial;
     //#[ state state_0.state_57.phone2Initial.(Entry) 
-    user = 0;
+    music();
     //#]
-    NOTIFY_TRANSITION_TERMINATED("64");
+    NOTIFY_TRANSITION_TERMINATED("65");
 }
 
 void _SysVehicule::state_57_exit() {
@@ -2415,26 +2589,36 @@ void _SysVehicule::state_57_exit() {
         // State phone2Initial
         case phone2Initial:
         {
+            popNullTransition();
             NOTIFY_STATE_EXITED("ROOT.state_0.state_57.phone2Initial");
         }
         break;
         // State phone2Calling
         case phone2Calling:
         {
+            popNullTransition();
             NOTIFY_STATE_EXITED("ROOT.state_0.state_57.phone2Calling");
         }
         break;
         // State callingAccept
         case callingAccept:
         {
+            popNullTransition();
             NOTIFY_STATE_EXITED("ROOT.state_0.state_57.callingAccept");
         }
         break;
-        // State callingDeny
-        case callingDeny:
+        // State CallingDeny
+        case CallingDeny:
         {
             cancel(state_57_timeout);
-            NOTIFY_STATE_EXITED("ROOT.state_0.state_57.callingDeny");
+            NOTIFY_STATE_EXITED("ROOT.state_0.state_57.CallingDeny");
+        }
+        break;
+        // State Phone2Ready
+        case Phone2Ready:
+        {
+            popNullTransition();
+            NOTIFY_STATE_EXITED("ROOT.state_0.state_57.Phone2Ready");
         }
         break;
         default:
@@ -2451,18 +2635,21 @@ IOxfReactive::TakeEventStatus _SysVehicule::state_57_processEvent() {
         // State phone2Initial
         case phone2Initial:
         {
-            if(IS_EVENT_TYPE_OF(evCalling__MonPkg_id))
+            if(IS_EVENT_TYPE_OF(OMNullEventId))
                 {
-                    NOTIFY_TRANSITION_STARTED("65");
-                    NOTIFY_STATE_EXITED("ROOT.state_0.state_57.phone2Initial");
-                    NOTIFY_STATE_ENTERED("ROOT.state_0.state_57.phone2Calling");
-                    state_57_subState = phone2Calling;
-                    state_57_active = phone2Calling;
-                    //#[ state state_0.state_57.phone2Calling.(Entry) 
-                    user = 1;
-                    //#]
-                    NOTIFY_TRANSITION_TERMINATED("65");
-                    res = eventConsumed;
+                    //## transition 106 
+                    if(IS_IN(unlockedPhone))
+                        {
+                            NOTIFY_TRANSITION_STARTED("106");
+                            popNullTransition();
+                            NOTIFY_STATE_EXITED("ROOT.state_0.state_57.phone2Initial");
+                            NOTIFY_STATE_ENTERED("ROOT.state_0.state_57.Phone2Ready");
+                            pushNullTransition();
+                            state_57_subState = Phone2Ready;
+                            state_57_active = Phone2Ready;
+                            NOTIFY_TRANSITION_TERMINATED("106");
+                            res = eventConsumed;
+                        }
                 }
             
             
@@ -2471,35 +2658,7 @@ IOxfReactive::TakeEventStatus _SysVehicule::state_57_processEvent() {
         // State phone2Calling
         case phone2Calling:
         {
-            if(IS_EVENT_TYPE_OF(evCallingDeny__MonPkg_id))
-                {
-                    NOTIFY_TRANSITION_STARTED("67");
-                    NOTIFY_STATE_EXITED("ROOT.state_0.state_57.phone2Calling");
-                    NOTIFY_STATE_ENTERED("ROOT.state_0.state_57.callingDeny");
-                    state_57_subState = callingDeny;
-                    state_57_active = callingDeny;
-                    //#[ state state_0.state_57.callingDeny.(Entry) 
-                    user=2;
-                    //#]
-                    state_57_timeout = scheduleTimeout(200, "ROOT.state_0.state_57.callingDeny");
-                    NOTIFY_TRANSITION_TERMINATED("67");
-                    res = eventConsumed;
-                }
-            else if(IS_EVENT_TYPE_OF(evCallingAccept__MonPkg_id))
-                {
-                    NOTIFY_TRANSITION_STARTED("66");
-                    NOTIFY_STATE_EXITED("ROOT.state_0.state_57.phone2Calling");
-                    NOTIFY_STATE_ENTERED("ROOT.state_0.state_57.callingAccept");
-                    state_57_subState = callingAccept;
-                    state_57_active = callingAccept;
-                    //#[ state state_0.state_57.callingAccept.(Entry) 
-                    user = 3;
-                    //#]
-                    NOTIFY_TRANSITION_TERMINATED("66");
-                    res = eventConsumed;
-                }
-            
-            
+            res = phone2Calling_handleEvent();
         }
         break;
         // State callingAccept
@@ -2507,41 +2666,106 @@ IOxfReactive::TakeEventStatus _SysVehicule::state_57_processEvent() {
         {
             if(IS_EVENT_TYPE_OF(evCallingDeny__MonPkg_id))
                 {
-                    NOTIFY_TRANSITION_STARTED("93");
+                    NOTIFY_TRANSITION_STARTED("97");
+                    popNullTransition();
                     NOTIFY_STATE_EXITED("ROOT.state_0.state_57.callingAccept");
-                    NOTIFY_STATE_ENTERED("ROOT.state_0.state_57.callingDeny");
-                    state_57_subState = callingDeny;
-                    state_57_active = callingDeny;
-                    //#[ state state_0.state_57.callingDeny.(Entry) 
+                    NOTIFY_STATE_ENTERED("ROOT.state_0.state_57.CallingDeny");
+                    state_57_subState = CallingDeny;
+                    state_57_active = CallingDeny;
+                    //#[ state state_0.state_57.CallingDeny.(Entry) 
                     user=2;
                     //#]
-                    state_57_timeout = scheduleTimeout(200, "ROOT.state_0.state_57.callingDeny");
-                    NOTIFY_TRANSITION_TERMINATED("93");
+                    state_57_timeout = scheduleTimeout(200, "ROOT.state_0.state_57.CallingDeny");
+                    NOTIFY_TRANSITION_TERMINATED("97");
                     res = eventConsumed;
+                }
+            else if(IS_EVENT_TYPE_OF(OMNullEventId))
+                {
+                    //## transition 109 
+                    if(IS_IN(bluetoothWaiting))
+                        {
+                            NOTIFY_TRANSITION_STARTED("109");
+                            popNullTransition();
+                            NOTIFY_STATE_EXITED("ROOT.state_0.state_57.callingAccept");
+                            //#[ transition 109 
+                            sound = 0;
+                            //#]
+                            NOTIFY_STATE_ENTERED("ROOT.state_0.state_57.phone2Initial");
+                            pushNullTransition();
+                            state_57_subState = phone2Initial;
+                            state_57_active = phone2Initial;
+                            //#[ state state_0.state_57.phone2Initial.(Entry) 
+                            music();
+                            //#]
+                            NOTIFY_TRANSITION_TERMINATED("109");
+                            res = eventConsumed;
+                        }
                 }
             
             
         }
         break;
-        // State callingDeny
-        case callingDeny:
+        // State CallingDeny
+        case CallingDeny:
         {
             if(IS_EVENT_TYPE_OF(OMTimeoutEventId))
                 {
                     if(getCurrentEvent() == state_57_timeout)
                         {
-                            NOTIFY_TRANSITION_STARTED("92");
+                            NOTIFY_TRANSITION_STARTED("98");
                             cancel(state_57_timeout);
-                            NOTIFY_STATE_EXITED("ROOT.state_0.state_57.callingDeny");
+                            NOTIFY_STATE_EXITED("ROOT.state_0.state_57.CallingDeny");
                             NOTIFY_STATE_ENTERED("ROOT.state_0.state_57.phone2Initial");
+                            pushNullTransition();
                             state_57_subState = phone2Initial;
                             state_57_active = phone2Initial;
                             //#[ state state_0.state_57.phone2Initial.(Entry) 
-                            user = 0;
+                            music();
                             //#]
-                            NOTIFY_TRANSITION_TERMINATED("92");
+                            NOTIFY_TRANSITION_TERMINATED("98");
                             res = eventConsumed;
                         }
+                }
+            
+            
+        }
+        break;
+        // State Phone2Ready
+        case Phone2Ready:
+        {
+            if(IS_EVENT_TYPE_OF(OMNullEventId))
+                {
+                    //## transition 107 
+                    if(IS_IN(bluetoothWaiting))
+                        {
+                            NOTIFY_TRANSITION_STARTED("107");
+                            popNullTransition();
+                            NOTIFY_STATE_EXITED("ROOT.state_0.state_57.Phone2Ready");
+                            NOTIFY_STATE_ENTERED("ROOT.state_0.state_57.phone2Initial");
+                            pushNullTransition();
+                            state_57_subState = phone2Initial;
+                            state_57_active = phone2Initial;
+                            //#[ state state_0.state_57.phone2Initial.(Entry) 
+                            music();
+                            //#]
+                            NOTIFY_TRANSITION_TERMINATED("107");
+                            res = eventConsumed;
+                        }
+                }
+            else if(IS_EVENT_TYPE_OF(evCalling__MonPkg_id))
+                {
+                    NOTIFY_TRANSITION_STARTED("66");
+                    popNullTransition();
+                    NOTIFY_STATE_EXITED("ROOT.state_0.state_57.Phone2Ready");
+                    NOTIFY_STATE_ENTERED("ROOT.state_0.state_57.phone2Calling");
+                    pushNullTransition();
+                    state_57_subState = phone2Calling;
+                    state_57_active = phone2Calling;
+                    //#[ state state_0.state_57.phone2Calling.(Entry) 
+                    user = 1;
+                    //#]
+                    NOTIFY_TRANSITION_TERMINATED("66");
+                    res = eventConsumed;
                 }
             
             
@@ -2553,17 +2777,73 @@ IOxfReactive::TakeEventStatus _SysVehicule::state_57_processEvent() {
     return res;
 }
 
+IOxfReactive::TakeEventStatus _SysVehicule::phone2Calling_handleEvent() {
+    IOxfReactive::TakeEventStatus res = eventNotConsumed;
+    if(IS_EVENT_TYPE_OF(evCallingDeny__MonPkg_id))
+        {
+            NOTIFY_TRANSITION_STARTED("68");
+            popNullTransition();
+            NOTIFY_STATE_EXITED("ROOT.state_0.state_57.phone2Calling");
+            NOTIFY_STATE_ENTERED("ROOT.state_0.state_57.CallingDeny");
+            state_57_subState = CallingDeny;
+            state_57_active = CallingDeny;
+            //#[ state state_0.state_57.CallingDeny.(Entry) 
+            user=2;
+            //#]
+            state_57_timeout = scheduleTimeout(200, "ROOT.state_0.state_57.CallingDeny");
+            NOTIFY_TRANSITION_TERMINATED("68");
+            res = eventConsumed;
+        }
+    else if(IS_EVENT_TYPE_OF(evCallingAccept__MonPkg_id))
+        {
+            NOTIFY_TRANSITION_STARTED("67");
+            popNullTransition();
+            NOTIFY_STATE_EXITED("ROOT.state_0.state_57.phone2Calling");
+            NOTIFY_STATE_ENTERED("ROOT.state_0.state_57.callingAccept");
+            pushNullTransition();
+            state_57_subState = callingAccept;
+            state_57_active = callingAccept;
+            //#[ state state_0.state_57.callingAccept.(Entry) 
+            user = 3;
+            //#]
+            NOTIFY_TRANSITION_TERMINATED("67");
+            res = eventConsumed;
+        }
+    else if(IS_EVENT_TYPE_OF(OMNullEventId))
+        {
+            //## transition 108 
+            if(IS_IN(bluetoothWaiting))
+                {
+                    NOTIFY_TRANSITION_STARTED("108");
+                    popNullTransition();
+                    NOTIFY_STATE_EXITED("ROOT.state_0.state_57.phone2Calling");
+                    //#[ transition 108 
+                    sound = 0;
+                    //#]
+                    NOTIFY_STATE_ENTERED("ROOT.state_0.state_57.phone2Initial");
+                    pushNullTransition();
+                    state_57_subState = phone2Initial;
+                    state_57_active = phone2Initial;
+                    //#[ state state_0.state_57.phone2Initial.(Entry) 
+                    music();
+                    //#]
+                    NOTIFY_TRANSITION_TERMINATED("108");
+                    res = eventConsumed;
+                }
+        }
+    
+    
+    return res;
+}
+
 void _SysVehicule::state_54_entDef() {
     NOTIFY_STATE_ENTERED("ROOT.state_0.state_54");
-    NOTIFY_TRANSITION_STARTED("100");
-    NOTIFY_STATE_ENTERED("ROOT.state_0.state_54.bluetoothOn");
+    NOTIFY_TRANSITION_STARTED("44");
+    NOTIFY_STATE_ENTERED("ROOT.state_0.state_54.bluetoothOff");
     pushNullTransition();
-    state_54_subState = bluetoothOn;
-    state_54_active = bluetoothOn;
-    //#[ state state_0.state_54.bluetoothOn.(Entry) 
-    bluetooth = true;
-    //#]
-    NOTIFY_TRANSITION_TERMINATED("100");
+    state_54_subState = bluetoothOff;
+    state_54_active = bluetoothOff;
+    NOTIFY_TRANSITION_TERMINATED("44");
 }
 
 IOxfReactive::TakeEventStatus _SysVehicule::state_54_processEvent() {
@@ -2574,20 +2854,17 @@ IOxfReactive::TakeEventStatus _SysVehicule::state_54_processEvent() {
         {
             if(IS_EVENT_TYPE_OF(OMNullEventId))
                 {
-                    //## transition 44 
+                    //## transition 45 
                     if(bluetooth == true && ignition == true)
                         {
-                            NOTIFY_TRANSITION_STARTED("44");
+                            NOTIFY_TRANSITION_STARTED("45");
                             popNullTransition();
                             NOTIFY_STATE_EXITED("ROOT.state_0.state_54.bluetoothOff");
                             NOTIFY_STATE_ENTERED("ROOT.state_0.state_54.bluetoothOn");
                             pushNullTransition();
                             state_54_subState = bluetoothOn;
                             state_54_active = bluetoothOn;
-                            //#[ state state_0.state_54.bluetoothOn.(Entry) 
-                            bluetooth = true;
-                            //#]
-                            NOTIFY_TRANSITION_TERMINATED("44");
+                            NOTIFY_TRANSITION_TERMINATED("45");
                             res = eventConsumed;
                         }
                 }
@@ -2600,20 +2877,20 @@ IOxfReactive::TakeEventStatus _SysVehicule::state_54_processEvent() {
         {
             if(IS_EVENT_TYPE_OF(OMNullEventId))
                 {
-                    //## transition 45 
+                    //## transition 46 
                     if(bluetooth == false || ignition == false)
                         {
-                            NOTIFY_TRANSITION_STARTED("45");
+                            NOTIFY_TRANSITION_STARTED("46");
                             popNullTransition();
                             NOTIFY_STATE_EXITED("ROOT.state_0.state_54.bluetoothOn");
-                            //#[ transition 45 
+                            //#[ transition 46 
                             bluetooth = false;
                             //#]
                             NOTIFY_STATE_ENTERED("ROOT.state_0.state_54.bluetoothOff");
                             pushNullTransition();
                             state_54_subState = bluetoothOff;
                             state_54_active = bluetoothOff;
-                            NOTIFY_TRANSITION_TERMINATED("45");
+                            NOTIFY_TRANSITION_TERMINATED("46");
                             res = eventConsumed;
                         }
                 }
@@ -2935,6 +3212,47 @@ void _SysVehicule::state_47_entDef() {
     NOTIFY_TRANSITION_TERMINATED("25");
 }
 
+void _SysVehicule::state_47_exit() {
+    switch (state_47_subState) {
+        // State limOff
+        case limOff:
+        {
+            popNullTransition();
+            cancel(state_47_timeout);
+            NOTIFY_STATE_EXITED("ROOT.state_0.state_47.limOff");
+        }
+        break;
+        // State limWaiting
+        case limWaiting:
+        {
+            popNullTransition();
+            cancel(state_47_timeout);
+            NOTIFY_STATE_EXITED("ROOT.state_0.state_47.limWaiting");
+        }
+        break;
+        // State limOn
+        case limOn:
+        {
+            popNullTransition();
+            cancel(state_47_timeout);
+            NOTIFY_STATE_EXITED("ROOT.state_0.state_47.limOn");
+        }
+        break;
+        // State limOffInatendu
+        case limOffInatendu:
+        {
+            cancel(state_47_timeout);
+            NOTIFY_STATE_EXITED("ROOT.state_0.state_47.limOffInatendu");
+        }
+        break;
+        default:
+            break;
+    }
+    state_47_subState = OMNonState;
+    
+    NOTIFY_STATE_EXITED("ROOT.state_0.state_47");
+}
+
 IOxfReactive::TakeEventStatus _SysVehicule::state_47_processEvent() {
     IOxfReactive::TakeEventStatus res = eventNotConsumed;
     switch (state_47_active) {
@@ -2974,6 +3292,9 @@ IOxfReactive::TakeEventStatus _SysVehicule::state_47_processEvent() {
                             pushNullTransition();
                             state_47_subState = limWaiting;
                             state_47_active = limWaiting;
+                            //#[ state state_0.state_47.limWaiting.(Entry) 
+                            reg = false;
+                            //#]
                             state_47_timeout = scheduleTimeout(200, "ROOT.state_0.state_47.limWaiting");
                             NOTIFY_TRANSITION_TERMINATED("26");
                             res = eventConsumed;
@@ -2986,89 +3307,31 @@ IOxfReactive::TakeEventStatus _SysVehicule::state_47_processEvent() {
         // State limWaiting
         case limWaiting:
         {
-            if(IS_EVENT_TYPE_OF(OMTimeoutEventId))
-                {
-                    if(getCurrentEvent() == state_47_timeout)
-                        {
-                            NOTIFY_TRANSITION_STARTED("29");
-                            popNullTransition();
-                            cancel(state_47_timeout);
-                            NOTIFY_STATE_EXITED("ROOT.state_0.state_47.limWaiting");
-                            NOTIFY_STATE_ENTERED("ROOT.state_0.state_47.limWaiting");
-                            pushNullTransition();
-                            state_47_subState = limWaiting;
-                            state_47_active = limWaiting;
-                            state_47_timeout = scheduleTimeout(200, "ROOT.state_0.state_47.limWaiting");
-                            NOTIFY_TRANSITION_TERMINATED("29");
-                            res = eventConsumed;
-                        }
-                }
-            else if(IS_EVENT_TYPE_OF(OMNullEventId))
-                {
-                    //## transition 30 
-                    if(speed<vitesseConsigne)
-                        {
-                            NOTIFY_TRANSITION_STARTED("30");
-                            popNullTransition();
-                            cancel(state_47_timeout);
-                            NOTIFY_STATE_EXITED("ROOT.state_0.state_47.limWaiting");
-                            NOTIFY_STATE_ENTERED("ROOT.state_0.state_47.limOn");
-                            pushNullTransition();
-                            state_47_subState = limOn;
-                            state_47_active = limOn;
-                            //#[ state state_0.state_47.limOn.(Entry) 
-                            limiteur();
-                            //#]
-                            state_47_timeout = scheduleTimeout(200, "ROOT.state_0.state_47.limOn");
-                            NOTIFY_TRANSITION_TERMINATED("30");
-                            res = eventConsumed;
-                        }
-                }
-            
-            
+            res = limWaiting_handleEvent();
         }
         break;
         // State limOn
         case limOn:
         {
+            res = limOn_handleEvent();
+        }
+        break;
+        // State limOffInatendu
+        case limOffInatendu:
+        {
             if(IS_EVENT_TYPE_OF(OMTimeoutEventId))
                 {
                     if(getCurrentEvent() == state_47_timeout)
                         {
-                            NOTIFY_TRANSITION_STARTED("31");
-                            popNullTransition();
+                            NOTIFY_TRANSITION_STARTED("100");
                             cancel(state_47_timeout);
-                            NOTIFY_STATE_EXITED("ROOT.state_0.state_47.limOn");
-                            NOTIFY_STATE_ENTERED("ROOT.state_0.state_47.limOn");
-                            pushNullTransition();
-                            state_47_subState = limOn;
-                            state_47_active = limOn;
-                            //#[ state state_0.state_47.limOn.(Entry) 
-                            limiteur();
-                            //#]
-                            state_47_timeout = scheduleTimeout(200, "ROOT.state_0.state_47.limOn");
-                            NOTIFY_TRANSITION_TERMINATED("31");
-                            res = eventConsumed;
-                        }
-                }
-            else if(IS_EVENT_TYPE_OF(OMNullEventId))
-                {
-                    //## transition 27 
-                    if(lim==false || accelPedal>9)
-                        {
-                            NOTIFY_TRANSITION_STARTED("27");
-                            popNullTransition();
-                            cancel(state_47_timeout);
-                            NOTIFY_STATE_EXITED("ROOT.state_0.state_47.limOn");
-                            //#[ transition 27 
-                            lim=false;
-                            //#]
+                            NOTIFY_STATE_EXITED("ROOT.state_0.state_47.limOffInatendu");
                             NOTIFY_STATE_ENTERED("ROOT.state_0.state_47.limOff");
                             pushNullTransition();
                             state_47_subState = limOff;
                             state_47_active = limOff;
                             state_47_timeout = scheduleTimeout(200, "ROOT.state_0.state_47.limOff");
-                            NOTIFY_TRANSITION_TERMINATED("27");
+                            NOTIFY_TRANSITION_TERMINATED("100");
                             res = eventConsumed;
                         }
                 }
@@ -3079,6 +3342,139 @@ IOxfReactive::TakeEventStatus _SysVehicule::state_47_processEvent() {
         default:
             break;
     }
+    return res;
+}
+
+IOxfReactive::TakeEventStatus _SysVehicule::limWaiting_handleEvent() {
+    IOxfReactive::TakeEventStatus res = eventNotConsumed;
+    if(IS_EVENT_TYPE_OF(OMTimeoutEventId))
+        {
+            if(getCurrentEvent() == state_47_timeout)
+                {
+                    NOTIFY_TRANSITION_STARTED("29");
+                    popNullTransition();
+                    cancel(state_47_timeout);
+                    NOTIFY_STATE_EXITED("ROOT.state_0.state_47.limWaiting");
+                    NOTIFY_STATE_ENTERED("ROOT.state_0.state_47.limWaiting");
+                    pushNullTransition();
+                    state_47_subState = limWaiting;
+                    state_47_active = limWaiting;
+                    //#[ state state_0.state_47.limWaiting.(Entry) 
+                    reg = false;
+                    //#]
+                    state_47_timeout = scheduleTimeout(200, "ROOT.state_0.state_47.limWaiting");
+                    NOTIFY_TRANSITION_TERMINATED("29");
+                    res = eventConsumed;
+                }
+        }
+    else if(IS_EVENT_TYPE_OF(OMNullEventId))
+        {
+            //## transition 30 
+            if(speed<vitesseConsigne)
+                {
+                    NOTIFY_TRANSITION_STARTED("30");
+                    popNullTransition();
+                    cancel(state_47_timeout);
+                    NOTIFY_STATE_EXITED("ROOT.state_0.state_47.limWaiting");
+                    NOTIFY_STATE_ENTERED("ROOT.state_0.state_47.limOn");
+                    pushNullTransition();
+                    state_47_subState = limOn;
+                    state_47_active = limOn;
+                    //#[ state state_0.state_47.limOn.(Entry) 
+                    limiteur();
+                    reg = false;
+                    //#]
+                    state_47_timeout = scheduleTimeout(200, "ROOT.state_0.state_47.limOn");
+                    NOTIFY_TRANSITION_TERMINATED("30");
+                    res = eventConsumed;
+                }
+            else
+                {
+                    //## transition 115 
+                    if(lim==false)
+                        {
+                            NOTIFY_TRANSITION_STARTED("115");
+                            popNullTransition();
+                            cancel(state_47_timeout);
+                            NOTIFY_STATE_EXITED("ROOT.state_0.state_47.limWaiting");
+                            NOTIFY_STATE_ENTERED("ROOT.state_0.state_47.limOff");
+                            pushNullTransition();
+                            state_47_subState = limOff;
+                            state_47_active = limOff;
+                            state_47_timeout = scheduleTimeout(200, "ROOT.state_0.state_47.limOff");
+                            NOTIFY_TRANSITION_TERMINATED("115");
+                            res = eventConsumed;
+                        }
+                }
+        }
+    
+    
+    return res;
+}
+
+IOxfReactive::TakeEventStatus _SysVehicule::limOn_handleEvent() {
+    IOxfReactive::TakeEventStatus res = eventNotConsumed;
+    if(IS_EVENT_TYPE_OF(OMTimeoutEventId))
+        {
+            if(getCurrentEvent() == state_47_timeout)
+                {
+                    NOTIFY_TRANSITION_STARTED("31");
+                    popNullTransition();
+                    cancel(state_47_timeout);
+                    NOTIFY_STATE_EXITED("ROOT.state_0.state_47.limOn");
+                    NOTIFY_STATE_ENTERED("ROOT.state_0.state_47.limOn");
+                    pushNullTransition();
+                    state_47_subState = limOn;
+                    state_47_active = limOn;
+                    //#[ state state_0.state_47.limOn.(Entry) 
+                    limiteur();
+                    reg = false;
+                    //#]
+                    state_47_timeout = scheduleTimeout(200, "ROOT.state_0.state_47.limOn");
+                    NOTIFY_TRANSITION_TERMINATED("31");
+                    res = eventConsumed;
+                }
+        }
+    else if(IS_EVENT_TYPE_OF(OMNullEventId))
+        {
+            //## transition 27 
+            if(lim==false || accelPedal>9)
+                {
+                    NOTIFY_TRANSITION_STARTED("27");
+                    popNullTransition();
+                    cancel(state_47_timeout);
+                    NOTIFY_STATE_EXITED("ROOT.state_0.state_47.limOn");
+                    //#[ transition 27 
+                    lim=false;
+                    //#]
+                    NOTIFY_STATE_ENTERED("ROOT.state_0.state_47.limOff");
+                    pushNullTransition();
+                    state_47_subState = limOff;
+                    state_47_active = limOff;
+                    state_47_timeout = scheduleTimeout(200, "ROOT.state_0.state_47.limOff");
+                    NOTIFY_TRANSITION_TERMINATED("27");
+                    res = eventConsumed;
+                }
+            else
+                {
+                    //## transition 99 
+                    if(alpha<-12)
+                        {
+                            NOTIFY_TRANSITION_STARTED("99");
+                            popNullTransition();
+                            cancel(state_47_timeout);
+                            NOTIFY_STATE_EXITED("ROOT.state_0.state_47.limOn");
+                            NOTIFY_STATE_ENTERED("ROOT.state_0.state_47.limOffInatendu");
+                            state_47_subState = limOffInatendu;
+                            state_47_active = limOffInatendu;
+                            state_47_timeout = scheduleTimeout(5000, "ROOT.state_0.state_47.limOffInatendu");
+                            NOTIFY_TRANSITION_TERMINATED("99");
+                            res = eventConsumed;
+                        }
+                }
+        }
+    
+    
     return res;
 }
 
@@ -3184,8 +3580,8 @@ IOxfReactive::TakeEventStatus _SysVehicule::state_33_processEvent() {
                             state_33_subState = regOn;
                             state_33_active = regOn;
                             //#[ state state_0.state_33.regOn.(Entry) 
-                            regulateur()
-                            ;
+                            regulateur();
+                            lim = false;
                             //#]
                             state_33_timeout = scheduleTimeout(200, "ROOT.state_0.state_33.regOn");
                             NOTIFY_TRANSITION_TERMINATED("18");
@@ -3199,7 +3595,47 @@ IOxfReactive::TakeEventStatus _SysVehicule::state_33_processEvent() {
         // State regAccel
         case regAccel:
         {
-            res = regAccel_handleEvent();
+            if(IS_EVENT_TYPE_OF(OMTimeoutEventId))
+                {
+                    if(getCurrentEvent() == state_33_timeout)
+                        {
+                            NOTIFY_TRANSITION_STARTED("24");
+                            popNullTransition();
+                            cancel(state_33_timeout);
+                            NOTIFY_STATE_EXITED("ROOT.state_0.state_33.regAccel");
+                            NOTIFY_STATE_ENTERED("ROOT.state_0.state_33.regAccel");
+                            pushNullTransition();
+                            state_33_subState = regAccel;
+                            state_33_active = regAccel;
+                            state_33_timeout = scheduleTimeout(200, "ROOT.state_0.state_33.regAccel");
+                            NOTIFY_TRANSITION_TERMINATED("24");
+                            res = eventConsumed;
+                        }
+                }
+            else if(IS_EVENT_TYPE_OF(OMNullEventId))
+                {
+                    //## transition 23 
+                    if(accelPedal <0.2)
+                        {
+                            NOTIFY_TRANSITION_STARTED("23");
+                            popNullTransition();
+                            cancel(state_33_timeout);
+                            NOTIFY_STATE_EXITED("ROOT.state_0.state_33.regAccel");
+                            NOTIFY_STATE_ENTERED("ROOT.state_0.state_33.regOn");
+                            pushNullTransition();
+                            state_33_subState = regOn;
+                            state_33_active = regOn;
+                            //#[ state state_0.state_33.regOn.(Entry) 
+                            regulateur();
+                            lim = false;
+                            //#]
+                            state_33_timeout = scheduleTimeout(200, "ROOT.state_0.state_33.regOn");
+                            NOTIFY_TRANSITION_TERMINATED("23");
+                            res = eventConsumed;
+                        }
+                }
+            
+            
         }
         break;
         // State regAdaptatif
@@ -3209,7 +3645,7 @@ IOxfReactive::TakeEventStatus _SysVehicule::state_33_processEvent() {
                 {
                     if(getCurrentEvent() == state_33_timeout)
                         {
-                            NOTIFY_TRANSITION_STARTED("82");
+                            NOTIFY_TRANSITION_STARTED("83");
                             popNullTransition();
                             cancel(state_33_timeout);
                             NOTIFY_STATE_EXITED("ROOT.state_0.state_33.regAdaptatif");
@@ -3218,19 +3654,19 @@ IOxfReactive::TakeEventStatus _SysVehicule::state_33_processEvent() {
                             state_33_subState = regAdaptatif;
                             state_33_active = regAdaptatif;
                             //#[ state state_0.state_33.regAdaptatif.(Entry) 
-                            regulateurAdaptatif();
+                            lim = false;
                             //#]
                             state_33_timeout = scheduleTimeout(200, "ROOT.state_0.state_33.regAdaptatif");
-                            NOTIFY_TRANSITION_TERMINATED("82");
+                            NOTIFY_TRANSITION_TERMINATED("83");
                             res = eventConsumed;
                         }
                 }
             else if(IS_EVENT_TYPE_OF(OMNullEventId))
                 {
-                    //## transition 84 
-                    if(IS_IN(vehiculeABS))
+                    //## transition 85 
+                    if(IS_IN(vehiculeABS) || ignition == false)
                         {
-                            NOTIFY_TRANSITION_STARTED("84");
+                            NOTIFY_TRANSITION_STARTED("85");
                             popNullTransition();
                             cancel(state_33_timeout);
                             NOTIFY_STATE_EXITED("ROOT.state_0.state_33.regAdaptatif");
@@ -3239,11 +3675,11 @@ IOxfReactive::TakeEventStatus _SysVehicule::state_33_processEvent() {
                             state_33_subState = regOn;
                             state_33_active = regOn;
                             //#[ state state_0.state_33.regOn.(Entry) 
-                            regulateur()
-                            ;
+                            regulateur();
+                            lim = false;
                             //#]
                             state_33_timeout = scheduleTimeout(200, "ROOT.state_0.state_33.regOn");
-                            NOTIFY_TRANSITION_TERMINATED("84");
+                            NOTIFY_TRANSITION_TERMINATED("85");
                             res = eventConsumed;
                         }
                 }
@@ -3275,8 +3711,8 @@ IOxfReactive::TakeEventStatus _SysVehicule::regOn_handleEvent() {
                     state_33_subState = regOn;
                     state_33_active = regOn;
                     //#[ state state_0.state_33.regOn.(Entry) 
-                    regulateur()
-                    ;
+                    regulateur();
+                    lim = false;
                     //#]
                     state_33_timeout = scheduleTimeout(200, "ROOT.state_0.state_33.regOn");
                     NOTIFY_TRANSITION_TERMINATED("21");
@@ -3328,10 +3764,10 @@ IOxfReactive::TakeEventStatus _SysVehicule::regOn_handleEvent() {
                         }
                     else
                         {
-                            //## transition 83 
+                            //## transition 84 
                             if(IS_IN(vehiculePresent))
                                 {
-                                    NOTIFY_TRANSITION_STARTED("83");
+                                    NOTIFY_TRANSITION_STARTED("84");
                                     popNullTransition();
                                     cancel(state_33_timeout);
                                     //#[ state state_0.state_33.regOn.(Exit) 
@@ -3343,80 +3779,12 @@ IOxfReactive::TakeEventStatus _SysVehicule::regOn_handleEvent() {
                                     state_33_subState = regAdaptatif;
                                     state_33_active = regAdaptatif;
                                     //#[ state state_0.state_33.regAdaptatif.(Entry) 
-                                    regulateurAdaptatif();
+                                    lim = false;
                                     //#]
                                     state_33_timeout = scheduleTimeout(200, "ROOT.state_0.state_33.regAdaptatif");
-                                    NOTIFY_TRANSITION_TERMINATED("83");
+                                    NOTIFY_TRANSITION_TERMINATED("84");
                                     res = eventConsumed;
                                 }
-                        }
-                }
-        }
-    
-    
-    return res;
-}
-
-IOxfReactive::TakeEventStatus _SysVehicule::regAccel_handleEvent() {
-    IOxfReactive::TakeEventStatus res = eventNotConsumed;
-    if(IS_EVENT_TYPE_OF(OMTimeoutEventId))
-        {
-            if(getCurrentEvent() == state_33_timeout)
-                {
-                    NOTIFY_TRANSITION_STARTED("24");
-                    popNullTransition();
-                    cancel(state_33_timeout);
-                    NOTIFY_STATE_EXITED("ROOT.state_0.state_33.regAccel");
-                    NOTIFY_STATE_ENTERED("ROOT.state_0.state_33.regAccel");
-                    pushNullTransition();
-                    state_33_subState = regAccel;
-                    state_33_active = regAccel;
-                    state_33_timeout = scheduleTimeout(200, "ROOT.state_0.state_33.regAccel");
-                    NOTIFY_TRANSITION_TERMINATED("24");
-                    res = eventConsumed;
-                }
-        }
-    else if(IS_EVENT_TYPE_OF(OMNullEventId))
-        {
-            //## transition 23 
-            if(accelPedal <0.2)
-                {
-                    NOTIFY_TRANSITION_STARTED("23");
-                    popNullTransition();
-                    cancel(state_33_timeout);
-                    NOTIFY_STATE_EXITED("ROOT.state_0.state_33.regAccel");
-                    NOTIFY_STATE_ENTERED("ROOT.state_0.state_33.regOn");
-                    pushNullTransition();
-                    state_33_subState = regOn;
-                    state_33_active = regOn;
-                    //#[ state state_0.state_33.regOn.(Entry) 
-                    regulateur()
-                    ;
-                    //#]
-                    state_33_timeout = scheduleTimeout(200, "ROOT.state_0.state_33.regOn");
-                    NOTIFY_TRANSITION_TERMINATED("23");
-                    res = eventConsumed;
-                }
-            else
-                {
-                    //## transition 85 
-                    if(IS_IN(vehiculeABS))
-                        {
-                            NOTIFY_TRANSITION_STARTED("85");
-                            popNullTransition();
-                            cancel(state_33_timeout);
-                            NOTIFY_STATE_EXITED("ROOT.state_0.state_33.regAccel");
-                            NOTIFY_STATE_ENTERED("ROOT.state_0.state_33.regOn");
-                            pushNullTransition();
-                            state_33_subState = regOn;
-                            state_33_active = regOn;
-                            //#[ state state_0.state_33.regOn.(Entry) 
-                            regulateur()
-                            ;
-                            //#]
-                            state_33_timeout = scheduleTimeout(200, "ROOT.state_0.state_33.regOn");
-                            NOTIFY_TRANSITION_TERMINATED("85");
-                            res = eventConsumed;
                         }
                 }
         }
@@ -3485,6 +3853,9 @@ void _SysVehicule::state_1_entDef() {
     state_1_active = motorOff;
     //#[ state state_0.state_1.motorOff.(Entry) 
     arreter();
+    lim = false;
+    reg = false;
+    bluetooth = false;
     //#]
     state_1_timeout = scheduleTimeout(500, "ROOT.state_0.state_1.motorOff");
     NOTIFY_TRANSITION_TERMINATED("14");
@@ -3532,6 +3903,9 @@ IOxfReactive::TakeEventStatus _SysVehicule::state_1_processEvent() {
                             state_1_active = motorOff;
                             //#[ state state_0.state_1.motorOff.(Entry) 
                             arreter();
+                            lim = false;
+                            reg = false;
+                            bluetooth = false;
                             //#]
                             state_1_timeout = scheduleTimeout(500, "ROOT.state_0.state_1.motorOff");
                             NOTIFY_TRANSITION_TERMINATED("12");
@@ -3562,6 +3936,9 @@ IOxfReactive::TakeEventStatus _SysVehicule::state_1_processEvent() {
                             state_1_active = motorOff;
                             //#[ state state_0.state_1.motorOff.(Entry) 
                             arreter();
+                            lim = false;
+                            reg = false;
+                            bluetooth = false;
                             //#]
                             state_1_timeout = scheduleTimeout(500, "ROOT.state_0.state_1.motorOff");
                             NOTIFY_TRANSITION_TERMINATED("15");
@@ -3639,8 +4016,7 @@ void OMAnimated_SysVehicule::serializeAttributes(AOMSAttributes* aomsAttributes)
     aomsAttributes->addAttribute("secondVehicule", x2String(myReal->secondVehicule));
     aomsAttributes->addAttribute("fspeed2", x2String(myReal->fspeed2));
     aomsAttributes->addAttribute("sound", x2String(myReal->sound));
-    aomsAttributes->addAttribute("distance2", x2String(myReal->distance2));
-    aomsAttributes->addAttribute("DistanceEntreVoiture", x2String(myReal->DistanceEntreVoiture));
+    aomsAttributes->addAttribute("sms", x2String(myReal->sms));
 }
 
 void OMAnimated_SysVehicule::rootState_serializeStates(AOMSState* aomsState) const {
@@ -3681,6 +4057,7 @@ void OMAnimated_SysVehicule::state_0_serializeStates(AOMSState* aomsState) const
     state_73_serializeStates(aomsState);
     state_77_serializeStates(aomsState);
     state_80_serializeStates(aomsState);
+    state_89_serializeStates(aomsState);
 }
 
 void OMAnimated_SysVehicule::state_9_serializeStates(AOMSState* aomsState) const {
@@ -3718,6 +4095,32 @@ void OMAnimated_SysVehicule::Accelerartion_serializeStates(AOMSState* aomsState)
     aomsState->addState("ROOT.state_0.state_9.Accelerartion");
 }
 
+void OMAnimated_SysVehicule::state_89_serializeStates(AOMSState* aomsState) const {
+    aomsState->addState("ROOT.state_0.state_89");
+    switch (myReal->state_89_subState) {
+        case _SysVehicule::SMS:
+        {
+            SMS_serializeStates(aomsState);
+        }
+        break;
+        case _SysVehicule::SmsNotReadyToShow:
+        {
+            SmsNotReadyToShow_serializeStates(aomsState);
+        }
+        break;
+        default:
+            break;
+    }
+}
+
+void OMAnimated_SysVehicule::SmsNotReadyToShow_serializeStates(AOMSState* aomsState) const {
+    aomsState->addState("ROOT.state_0.state_89.SmsNotReadyToShow");
+}
+
+void OMAnimated_SysVehicule::SMS_serializeStates(AOMSState* aomsState) const {
+    aomsState->addState("ROOT.state_0.state_89.SMS");
+}
+
 void OMAnimated_SysVehicule::state_80_serializeStates(AOMSState* aomsState) const {
     aomsState->addState("ROOT.state_0.state_80");
     switch (myReal->state_80_subState) {
@@ -3726,9 +4129,9 @@ void OMAnimated_SysVehicule::state_80_serializeStates(AOMSState* aomsState) cons
             musicoff_serializeStates(aomsState);
         }
         break;
-        case _SysVehicule::Song1:
+        case _SysVehicule::song1:
         {
-            Song1_serializeStates(aomsState);
+            song1_serializeStates(aomsState);
         }
         break;
         case _SysVehicule::song2:
@@ -3739,6 +4142,11 @@ void OMAnimated_SysVehicule::state_80_serializeStates(AOMSState* aomsState) cons
         case _SysVehicule::song3:
         {
             song3_serializeStates(aomsState);
+        }
+        break;
+        case _SysVehicule::song1_2:
+        {
+            song1_2_serializeStates(aomsState);
         }
         break;
         default:
@@ -3754,8 +4162,12 @@ void OMAnimated_SysVehicule::song2_serializeStates(AOMSState* aomsState) const {
     aomsState->addState("ROOT.state_0.state_80.song2");
 }
 
-void OMAnimated_SysVehicule::Song1_serializeStates(AOMSState* aomsState) const {
-    aomsState->addState("ROOT.state_0.state_80.Song1");
+void OMAnimated_SysVehicule::song1_2_serializeStates(AOMSState* aomsState) const {
+    aomsState->addState("ROOT.state_0.state_80.song1_2");
+}
+
+void OMAnimated_SysVehicule::song1_serializeStates(AOMSState* aomsState) const {
+    aomsState->addState("ROOT.state_0.state_80.song1");
 }
 
 void OMAnimated_SysVehicule::musicoff_serializeStates(AOMSState* aomsState) const {
@@ -3923,14 +4335,23 @@ void OMAnimated_SysVehicule::state_57_serializeStates(AOMSState* aomsState) cons
             callingAccept_serializeStates(aomsState);
         }
         break;
-        case _SysVehicule::callingDeny:
+        case _SysVehicule::CallingDeny:
         {
-            callingDeny_serializeStates(aomsState);
+            CallingDeny_serializeStates(aomsState);
+        }
+        break;
+        case _SysVehicule::Phone2Ready:
+        {
+            Phone2Ready_serializeStates(aomsState);
         }
         break;
         default:
             break;
     }
+}
+
+void OMAnimated_SysVehicule::Phone2Ready_serializeStates(AOMSState* aomsState) const {
+    aomsState->addState("ROOT.state_0.state_57.Phone2Ready");
 }
 
 void OMAnimated_SysVehicule::phone2Initial_serializeStates(AOMSState* aomsState) const {
@@ -3941,8 +4362,8 @@ void OMAnimated_SysVehicule::phone2Calling_serializeStates(AOMSState* aomsState)
     aomsState->addState("ROOT.state_0.state_57.phone2Calling");
 }
 
-void OMAnimated_SysVehicule::callingDeny_serializeStates(AOMSState* aomsState) const {
-    aomsState->addState("ROOT.state_0.state_57.callingDeny");
+void OMAnimated_SysVehicule::CallingDeny_serializeStates(AOMSState* aomsState) const {
+    aomsState->addState("ROOT.state_0.state_57.CallingDeny");
 }
 
 void OMAnimated_SysVehicule::callingAccept_serializeStates(AOMSState* aomsState) const {
@@ -4055,6 +4476,11 @@ void OMAnimated_SysVehicule::state_47_serializeStates(AOMSState* aomsState) cons
             limOn_serializeStates(aomsState);
         }
         break;
+        case _SysVehicule::limOffInatendu:
+        {
+            limOffInatendu_serializeStates(aomsState);
+        }
+        break;
         default:
             break;
     }
@@ -4066,6 +4492,10 @@ void OMAnimated_SysVehicule::limWaiting_serializeStates(AOMSState* aomsState) co
 
 void OMAnimated_SysVehicule::limOn_serializeStates(AOMSState* aomsState) const {
     aomsState->addState("ROOT.state_0.state_47.limOn");
+}
+
+void OMAnimated_SysVehicule::limOffInatendu_serializeStates(AOMSState* aomsState) const {
+    aomsState->addState("ROOT.state_0.state_47.limOffInatendu");
 }
 
 void OMAnimated_SysVehicule::limOff_serializeStates(AOMSState* aomsState) const {
@@ -4196,6 +4626,10 @@ IMPLEMENT_OP_CALL(_MonPkg__SysVehicule_setReg_bool, _SysVehicule, setReg(p_reg),
 IMPLEMENT_META_OP(OMAnimated_SysVehicule, _MonPkg__SysVehicule_setSecondVehicule_bool, "setSecondVehicule", FALSE, "setSecondVehicule(bool)", 1)
 
 IMPLEMENT_OP_CALL(_MonPkg__SysVehicule_setSecondVehicule_bool, _SysVehicule, setSecondVehicule(p_secondVehicule), NO_OP())
+
+IMPLEMENT_META_OP(OMAnimated_SysVehicule, _MonPkg__SysVehicule_setSms_int, "setSms", FALSE, "setSms(int)", 1)
+
+IMPLEMENT_OP_CALL(_MonPkg__SysVehicule_setSms_int, _SysVehicule, setSms(p_sms), NO_OP())
 
 IMPLEMENT_META_OP(OMAnimated_SysVehicule, _MonPkg__SysVehicule_setThrottle_double, "setThrottle", FALSE, "setThrottle(double)", 1)
 

@@ -4,7 +4,7 @@
 	Component	: CodesGeneres 
 	Configuration 	: ModeAnimation
 	Model Element	: _MonPkg
-//!	Generated Date	: Mon, 27, Oct 2025  
+//!	Generated Date	: Fri, 14, Nov 2025  
 	File Path	: CodesGeneres\ModeAnimation\_MonPkg.cpp
 *********************************************************************/
 
@@ -154,6 +154,18 @@
 #define evCallingDeny_UNSERIALIZE OM_NO_OP
 
 #define evCallingDeny_CONSTRUCTOR evCallingDeny()
+
+#define evSMS_SERIALIZE OM_NO_OP
+
+#define evSMS_UNSERIALIZE OM_NO_OP
+
+#define evSMS_CONSTRUCTOR evSMS()
+
+#define evRead_SERIALIZE OM_NO_OP
+
+#define evRead_UNSERIALIZE OM_NO_OP
+
+#define evRead_CONSTRUCTOR evRead()
 //#]
 
 //## package _MonPkg
@@ -443,6 +455,30 @@ bool evCallingDeny::isTypeOf(const short id) const {
 }
 
 IMPLEMENT_META_EVENT_P(evCallingDeny, _MonPkg, _MonPkg, evCallingDeny())
+
+//## event evSMS()
+evSMS::evSMS() {
+    NOTIFY_EVENT_CONSTRUCTOR(evSMS)
+    setId(evSMS__MonPkg_id);
+}
+
+bool evSMS::isTypeOf(const short id) const {
+    return (evSMS__MonPkg_id==id);
+}
+
+IMPLEMENT_META_EVENT_P(evSMS, _MonPkg, _MonPkg, evSMS())
+
+//## event evRead()
+evRead::evRead() {
+    NOTIFY_EVENT_CONSTRUCTOR(evRead)
+    setId(evRead__MonPkg_id);
+}
+
+bool evRead::isTypeOf(const short id) const {
+    return (evRead__MonPkg_id==id);
+}
+
+IMPLEMENT_META_EVENT_P(evRead, _MonPkg, _MonPkg, evRead())
 
 /*********************************************************************
 	File Path	: CodesGeneres\ModeAnimation\_MonPkg.cpp
